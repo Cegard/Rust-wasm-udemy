@@ -1,12 +1,12 @@
 
 fn main() {
-    let mut message = String::from("Hello");
-    let message2: &mut String = &mut message;
+    let mut a = 0;
+    let d = a; // storing var a on a inmuable variable
 
-    message2.push_str(" World!");
+    let mut b = &mut a; // first reference
+    let c = &mut b; // second reference
 
-    //println!("{}", message); not allowed
-    println!("{}", message2);
-    // println!("{}", message); //allowed after using message2
+    **c = 100; // dereferencing twice to access var a's value
+    println!("{}", d == **c);
 }
  
