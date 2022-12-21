@@ -1,12 +1,13 @@
 
 fn main() {
     let message = String::from("Hello");
-    print_message(message); // message is moved to the function 
-    // calling the variable message after this is invalid
-    // println!("{}", message);
+    let message_two = extend_message(message);
+
+    println!("{}", message_two);
 }
 
-fn print_message(a: String) {
-    println!("{}", a);
-    let c = a; // moving a into c
+fn extend_message(mut a: String) -> String {
+    a.push_str(" World!");
+    return a;
 }
+ 
