@@ -1,9 +1,12 @@
 
 fn main() {
-    let message = String::from("Hello");
-    let message2: &String = &message;
+    let mut message = String::from("Hello");
+    let message2: &mut String = &mut message;
 
-    println!("{}", message);
+    message2.push_str(" World!");
+
+    //println!("{}", message); not allowed
     println!("{}", message2);
+    // println!("{}", message); //allowed after using message2
 }
  
