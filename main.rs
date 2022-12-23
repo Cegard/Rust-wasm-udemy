@@ -1,12 +1,21 @@
 
+struct Person{
+    name: String,
+    last_name: String,
+    age: u32,
+}
+
 fn main() {
-    let mut a = 0;
-    let d = a; // storing var a on a inmuable variable
+    let person = Person {
+        name: String::from("foo"),
+        last_name: "bar".to_string(),
+        age: 30
+    };
 
-    let mut b = &mut a; // first reference
-    let c = &mut b; // second reference
+    let name = person.name;
+    let last_name = person.last_name;
+    let age = person.age;
 
-    **c = 100; // dereferencing twice to access var a's value
-    println!("{}", d == **c);
+    print!("{name}\n{last_name}\n{age}\n");
 }
  
