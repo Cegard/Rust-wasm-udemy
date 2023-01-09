@@ -1,8 +1,8 @@
 #[derive(Debug)]
 
 enum PersonID {
-    Passpport,
-    IDCard,
+    Passpport(String),
+    IDCard(u32),
 }
 
 struct Person{
@@ -24,7 +24,12 @@ impl Person {
 
     // Empty constructor
     fn new_empty() -> Person {
-        return Person { name: "_".to_string(), last_name: String::from("_"), age: 1, id: PersonID::IDCard };
+        return Person {
+            name: "_".to_string(),
+            last_name: String::from("_"),
+            age: 1,
+            id: PersonID::IDCard(0)
+        };
     }
 
     fn new(name: String, last_name: String, age: u32, id: PersonID) -> Person {
@@ -51,7 +56,7 @@ fn main() {
         String::from("foo"),
         "bar".to_string(),
         30,
-        PersonID::Passpport
+        PersonID::Passpport("XYZ-001122".to_string())
     );
     
     let empty_person = Person::new_empty();
