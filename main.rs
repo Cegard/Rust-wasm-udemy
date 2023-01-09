@@ -62,22 +62,23 @@ fn main() {
     let empty_person = Person::new_empty();
     
     print!("{}\t{}\t{}\t{:#?}\n", person.name, person.last_name, person.age, person.id);
-    print!("{}\t{}\t{}\t{:#?}\n", empty_person.name, empty_person.last_name, empty_person.age, empty_person.id);
     check_person_id(person.id);
+
+    print!("{}\t{}\t{}\t{:#?}\n", empty_person.name, empty_person.last_name, empty_person.age, empty_person.id);
     check_person_id(empty_person.id);
 }
 
 fn check_person_id(id: PersonID) {
     
-    let result = match id {
-        PersonID::Passpport(string_part, number_part) => {          //
-            format!("Passport number {string_part}-{number_part}")  // This part is called an "arm"
-        },                                                          //
-        PersonID::IDCard(number) => {
-            format!("ID card number {number}")
-        }                                                           // Arms have to return the same type among all of them
-    };
-
-    println!("{result}");
+    if let PersonID::IDCard(number) = id {
+        println!("ID Card {number}");
+    }
+    else if let PersonID::Passpport(string_part, number_part) = id {
+        println!("Passport number {string_part}-{number_part}");
+    }
+    // else {
+    //     There can be an else here, yet in this case is usless
+    //     since the enum PersonID has to be either Passport or IDCard
+    // }
 }
  
