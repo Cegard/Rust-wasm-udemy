@@ -78,6 +78,6 @@ fn check_person_id(id: PersonID) {
         }                                                           // Arms have to return the same type among all of them
     };
 
-    println!("{}", result);
+    println!("{result}");
 }
  
