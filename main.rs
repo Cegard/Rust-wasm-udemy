@@ -1,7 +1,7 @@
 #[derive(Debug)]
 
 enum PersonID {
-    Passpport(String),
+    Passpport(String, u32),
     IDCard(u32),
 }
 
@@ -56,12 +56,28 @@ fn main() {
         String::from("foo"),
         "bar".to_string(),
         30,
-        PersonID::Passpport("XYZ-001122".to_string())
+        PersonID::Passpport("XYZ".to_string(), 112233)
     );
     
     let empty_person = Person::new_empty();
     
     print!("{}\t{}\t{}\t{:#?}\n", person.name, person.last_name, person.age, person.id);
     print!("{}\t{}\t{}\t{:#?}\n", empty_person.name, empty_person.last_name, empty_person.age, empty_person.id);
+    check_person_id(person.id);
+    check_person_id(empty_person.id);
+}
+
+fn check_person_id(id: PersonID) {
+    
+    let result = match id {
+        PersonID::Passpport(string_part, number_part) => {          //
+            format!("Passport number {string_part}-{number_part}")  // This part is called an "arm"
+        },                                                          //
+        PersonID::IDCard(number) => {
+            format!("ID card number {number}")
+        }                                                           // Arms have to return the same type among all of them
+    };
+
+    println!("{}", result);
 }
  
