@@ -14,6 +14,7 @@ struct Person{
     ///////////
 }
 
+struct Animal(String, u32, String); // Struct with no named fields
     
 impl Person {
 
@@ -66,6 +67,11 @@ fn main() {
 
     print!("{}\t{}\t{}\t{:#?}\n", empty_person.name, empty_person.last_name, empty_person.age, empty_person.id);
     check_person_id(empty_person.id);
+
+    let dog = Animal("Dog".to_string(), 4, String::from("Woof!"));
+    let Animal(animal_type, age, sound) = dog;
+
+    println!("I'm a {} years old {} and I say {}", age, animal_type, sound);
 }
 
 fn check_person_id(id: PersonID) {
@@ -81,4 +87,3 @@ fn check_person_id(id: PersonID) {
     //     since the enum PersonID has to be either Passport or IDCard
     // }
 }
- 
