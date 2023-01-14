@@ -1,13 +1,6 @@
 
 trait Display {
     fn display(&self); // As a method
-
-    fn log(); // As a class function
-
-    // With a default value
-    fn show() {
-        println!("You forgot to implement this!"); 
-    }
 }
 
 #[derive(Debug)]
@@ -41,20 +34,12 @@ impl Person {
 
 impl Display for Person {
 
-    fn log() {
-        println!("Person struct.");
-    }
-
     fn display(&self) {
         print!("{}\t{}\t{}\t{:#?}\n", self.name, self.last_name, self.age, self.id);
     }
 }
 
 impl Display for Animal {
-
-    fn log() {
-        println!("Animal struct.");
-    }
 
     fn display(&self) {
         print!("{}\t{}\t{}\n", self.0, self.1, self.2);
@@ -71,11 +56,17 @@ fn main() {
 
     let animal = Animal("Dog".to_string(), 4, "Woof!".to_string());
 
-    Person::log();
-    person.display();
-    Person::show();
+    display(person);
+    display_the_2nd(&animal);
+}
 
-    Animal::log();
-    animal.display();
-    Animal::show();
+// There will be as many copies of display() as structs implementing the Display trait
+// (Will be creted during compile time)
+fn display(to_display: impl Display){
+    to_display.display();
+}
+
+// Using dynamic dispatch makes the program to select the proper implementatio during runtime
+fn display_the_2nd(to_display: &dyn Display){
+    to_display.display();
 }
