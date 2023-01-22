@@ -1,5 +1,18 @@
 
 pub mod learn_rust {
+
+    mod top_level {
+        pub fn say_hi() {
+            println!("\n\tHi");
+        }
+
+        pub mod bottom_level {
+            pub fn say_hello(){
+                println!("\tHello\n")
+            }
+        }
+    }
+
     pub trait Display {
         fn display(&self); // As a method
     }
@@ -36,6 +49,16 @@ pub mod learn_rust {
     impl Display for Person {
 
         fn display(&self) {
+
+            // Absolute references (crate points to -> src/lib.rs and src/main.rs)
+            crate::learn_rust::top_level::say_hi();
+            crate::learn_rust::top_level::bottom_level::say_hello();
+            //////////////////////////////////////////////////////////////////////
+
+            // Relative references (since they are in the same package?)
+            top_level::say_hi();
+            top_level::bottom_level::say_hello();
+            ////////////////////////////////////////////////////////////
             print!("{}\t{}\t{}\t{:#?}\n", self.name, self.last_name, self.age, self.id);
         }
     }
