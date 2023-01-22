@@ -25,7 +25,7 @@ pub mod learn_rust {
 
     pub struct Person{
         // fields //
-        name: String,
+        pub name: String,
         last_name: String,
         age: u32,
         id: PersonID
@@ -43,6 +43,10 @@ pub mod learn_rust {
                 age,
                 id
             };
+        }
+
+        pub fn get_last_name(&self) -> &String {
+            return &self.last_name;
         }
     }
 
