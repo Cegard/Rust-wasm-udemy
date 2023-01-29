@@ -1,88 +1,87 @@
 
-pub mod learn_rust {
+fn outsider() {
+    println!("From the outsider function");
+}
 
-    mod top_level {
-        pub fn say_hi() {
-            println!("\n\tHi");
-        }
+pub mod top_mod {
+    pub mod learn_rust {
 
-        pub mod bottom_level {
-            pub fn say_hello(){
-                println!("\tHello\n")
+        mod top_level {
+            pub fn say_hi() {
+                println!("\n\tHi");
+            }
+
+            pub mod bottom_level {
+                pub fn say_hello(){
+                    println!("\tHello\n")
+                }
             }
         }
-    }
 
-    pub trait Display {
-        fn display(&self); // As a method
-    }
-
-    #[derive(Debug)]
-    pub enum PersonID {
-        Passpport(String, u32),
-        IDCard(u32),
-    }
-
-    pub struct Person{
-        // fields //
-        pub name: String,
-        last_name: String,
-        age: u32,
-        id: PersonID
-        ///////////
-    }
-
-    pub struct Animal(pub String, pub u32, pub String); // Struct with no named fields
-        
-    impl Person {
-
-        pub fn from(name: String, last_name: String, age: u32, id: PersonID) -> Person {
-            return Person{
-                name,
-                last_name,
-                age,
-                id
-            };
+        pub trait Display {
+            fn display(&self); // As a method
         }
 
-        pub fn get_last_name(&self) -> &String {
-            return &self.last_name;
+        #[derive(Debug)]
+        pub enum PersonID {
+            Passpport(String, u32),
+            IDCard(u32),
         }
-    }
 
-    impl Display for Person {
-
-        fn display(&self) {
-
-            // Absolute references (crate points to -> src/lib.rs and src/main.rs)
-            crate::learn_rust::top_level::say_hi();
-            crate::learn_rust::top_level::bottom_level::say_hello();
-            //////////////////////////////////////////////////////////////////////
-
-            // Relative references (since they are in the same package?)
-            top_level::say_hi();
-            top_level::bottom_level::say_hello();
-            ////////////////////////////////////////////////////////////
-            print!("{}\t{}\t{}\t{:#?}\n", self.name, self.last_name, self.age, self.id);
+        pub struct Person{
+            // fields //
+            pub name: String,
+            last_name: String,
+            age: u32,
+            id: PersonID
+            ///////////
         }
-    }
 
-    impl Display for Animal {
+        pub struct Animal(pub String, pub u32, pub String); // Struct with no named fields
+            
+        impl Person {
 
-        fn display(&self) {
-            print!("{}\t{}\t{}\n", self.0, self.1, self.2);
+            pub fn from(name: String, last_name: String, age: u32, id: PersonID) -> Person {
+                return Person{
+                    name,
+                    last_name,
+                    age,
+                    id
+                };
+            }
+
+            pub fn get_last_name(&self) -> &String {
+                return &self.last_name;
+            }
         }
-    }
+
+        impl Display for Person {
+
+            fn display(&self) {
+                crate::outsider();
+
+                // The "super" keyword moves to one module up (like writing ".." on directories)
+                super::super::outsider();
+            }
+        }
+
+        impl Display for Animal {
+
+            fn display(&self) {
+                print!("{}\t{}\t{}\n", self.0, self.1, self.2);
+            }
+        }
 
 
-    // There will be as many copies of display() as structs implementing the Display trait
-    // (Will be creted during compile time)
-    pub fn display(to_display: impl Display){
-        to_display.display();
-    }
+        // There will be as many copies of display() as structs implementing the Display trait
+        // (Will be creted during compile time)
+        pub fn display(to_display: impl Display){
+            to_display.display();
+        }
 
-    // Using dynamic dispatch makes the program to select the proper implementatio during runtime
-    pub fn display_the_2nd(to_display: &dyn Display){
-        to_display.display();
+        // Using dynamic dispatch makes the program to select the proper implementatio during runtime
+        pub fn display_the_2nd(to_display: &dyn Display){
+            to_display.display();
+        }
     }
 }
