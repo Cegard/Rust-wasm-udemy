@@ -1,10 +1,18 @@
 
+// The mod keyword here imports the modules in the lib file
+mod lib_two;
+
+// The use keyword here allows a less verbose access 
+// use lib_two::mod_two;
+
 fn outsider() {
     println!("From the outsider function");
 }
 
 pub mod top_mod {
     pub mod learn_rust {
+        use crate::lib_two::mod_two;
+
 
         mod top_level {
             pub fn say_hi() {
@@ -58,10 +66,11 @@ pub mod top_mod {
         impl Display for Person {
 
             fn display(&self) {
-                crate::outsider();
+                // crate::outsider();
 
                 // The "super" keyword moves to one module up (like writing ".." on directories)
                 super::super::outsider();
+                mod_two::fn_two();
             }
         }
 
