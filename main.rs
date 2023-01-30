@@ -1,4 +1,4 @@
-use snake_game_v1::top_mod::learn_rust::{Person, Display};
+use snake_game_v1::top_mod::learn_rust::{Person};
 
 fn main() {
     let person = Person::from(
@@ -7,5 +7,6 @@ fn main() {
         30,
         snake_game_v1::top_mod::learn_rust::PersonID::Passpport("XYZ".to_string(), 112233)
     );
-    person.display();
+    
+    println!("{}", person.id);
 }

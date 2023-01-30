@@ -12,6 +12,7 @@ fn outsider() {
 pub mod top_mod {
     pub mod learn_rust {
         use crate::lib_two::mod_two;
+        use std::{fmt, ptr::null};
 
 
         mod top_level {
@@ -30,10 +31,18 @@ pub mod top_mod {
             fn display(&self); // As a method
         }
 
-        #[derive(Debug)]
         pub enum PersonID {
             Passpport(String, u32),
             IDCard(u32),
+        }
+        
+        impl fmt::Display for PersonID {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                match self {
+                    PersonID::Passpport(word, number) => return write!(f, "{}{}", word, number),
+                    PersonID::IDCard(number) => return write!(f, "{}", number),
+                }
+            }
         }
 
         pub struct Person{
@@ -41,7 +50,7 @@ pub mod top_mod {
             pub name: String,
             last_name: String,
             age: u32,
-            id: PersonID
+            pub id: PersonID
             ///////////
         }
 
