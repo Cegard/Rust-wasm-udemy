@@ -16,9 +16,8 @@
 (module
   (import "console" "log" (func $log))
   (import "console" "error" (func $error))
-  (; assigns a memory page named as $mem ;)
-  (memory $mem 1) (; 1 means one page of memory (each memory page is ~64KB) ;)
-  (data (i32.const 0) "Hi") (; assigns the word 'Hi' from the beggining of the memory buffer ;)
+  (memory (import "js" "mem") 1)
+  (data (i32.const 0) "Hey") (; assigns the word 'Hey' from the beggining of the memory buffer ;)
   (func $add (param $a i32) (param $b i32) (result i32)
     call $log
     local.get $a
@@ -27,6 +26,5 @@
     call $error
   )
   (export "add" (func $add))
-  (export "mem" (memory $mem))
 )
  -->
