@@ -7,14 +7,18 @@
   <title>Document</title>
 </head>
 <body>
-  <script src="./static/index.js"></script>
+  <script src="./index.js"></script>
   <h1>Hello World!!!</h1>
 </body>
 </html>
 
-<!-- (module
+<!-- 
+(module
   (import "console" "log" (func $log))
   (import "console" "error" (func $error))
+  (; assigns a memory page named as $mem ;)
+  (memory $mem 1) (; 1 means one page of memory (each memory page is ~64KB) ;)
+  (data (i32.const 0) "Hi") (; assigns the word 'Hi' from the beggining of the memory buffer ;)
   (func $add (param $a i32) (param $b i32) (result i32)
     call $log
     local.get $a
@@ -23,4 +27,6 @@
     call $error
   )
   (export "add" (func $add))
-) -->
+  (export "mem" (memory $mem))
+)
+ -->

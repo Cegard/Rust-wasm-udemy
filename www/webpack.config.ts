@@ -8,10 +8,10 @@ module.exports = {
     filename: "index.js"
   },
   mode: "development",
-  plugins:[
+  plugins: [
     new copy({
       patterns: [
-        {from: "public/index.html", to: "index.html"}
+        {from: "public/index.html", to: "./index.html"}
       ]
     })
   ]
