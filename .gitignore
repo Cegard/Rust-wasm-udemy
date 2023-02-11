@@ -2,7 +2,7 @@
 .directory
 
 www/node_modules
-
+www/public/static
 # Added by cargo
 
 /target
