@@ -1,6 +1,8 @@
 
 .directory
 
+www/node_modules
+
 # Added by cargo
 
 /target
