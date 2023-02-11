@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "webpack-dev-server",
-    "build": "webpack build"
+    "build": "webpack build",
+    "local-deploy": "webpack build && webpack-dev-server"
   },
   "keywords": [],
   "author": "",
