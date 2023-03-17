@@ -11,20 +11,3 @@
   <h1>Hello World!!!</h1>
 </body>
 </html>
-
-<!-- 
-(module
-  (import "console" "log" (func $log))
-  (import "console" "error" (func $error))
-  (memory (import "js" "mem") 1)
-  (data (i32.const 0) "Hey") (; assigns the word 'Hey' from the beggining of the memory buffer ;)
-  (func $add (param $a i32) (param $b i32) (result i32)
-    call $log
-    local.get $a
-    local.get $b
-    i32.add
-    call $error
-  )
-  (export "add" (func $add))
-)
- -->
