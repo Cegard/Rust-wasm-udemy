@@ -15,7 +15,8 @@
   "dependencies": {
     "copy-webpack-plugin": "^11.0.0",
     "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "snake_game_v1": "file:../pkg"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
