@@ -2,10 +2,10 @@ import path from "path";
 import copy from "copy-webpack-plugin";
 
 module.exports = {
-  entry: "./public/index.ts",
+  entry: "./public/bootstrap.ts",
   output: {
     path: path.resolve(__dirname, "public/static"),
-    filename: "index.js"
+    filename: "bootstrap.js"
   },
   mode: "development",
   plugins: [
