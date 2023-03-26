@@ -5,13 +5,17 @@ use wee_alloc::WeeAlloc;
 static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
 #[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(format!("Hello {}!", name).as_str());
+pub struct World {
+    pub size: usize,
 }
 
 #[wasm_bindgen]
-extern {
-    pub fn alert(s: &str);
+impl World {
+    pub fn new() -> World {
+        return World {
+            size: 8
+        };
+    }
 }
 
 // cargo install wasm-pack --force --target x86_64-unknown-linux-musl

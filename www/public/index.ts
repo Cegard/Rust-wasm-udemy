@@ -1,8 +1,9 @@
-import init, { greet } from 'snake_game_v1';
+import init, { World } from 'snake_game_v1';
 
 async function start() {
   await init();
-  greet("Eddie");
+  const world = World.new();
+  console.log(world.size);
 }
 
 start();
