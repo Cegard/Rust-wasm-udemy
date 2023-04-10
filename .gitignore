@@ -1,8 +1,9 @@
 
 .directory
+.vscode
 
 www/node_modules
-www/public/static
-# Added by cargo
+www/public/static/add.wasm
 
+# Added by cargo
 /target
