@@ -25,6 +25,7 @@ async function start() {
   }
 
   drawWorld();
+  console.log(world.get_snake_head());
 }
 
 start();
