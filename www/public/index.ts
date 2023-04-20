@@ -24,7 +24,23 @@ async function start() {
     context.stroke();
   }
 
+  function drawSnake() {
+    const headIdx = world.get_snake_head();
+    const headCol = headIdx % worldSize;
+    const headRow = Math.floor(headIdx/worldSize);
+
+    context.beginPath();
+    context.fillRect(
+      headCol * CELL_SIZE,
+      headRow * CELL_SIZE,
+      CELL_SIZE,
+      CELL_SIZE
+    );
+    context.stroke();
+  }
+
   drawWorld();
+  drawSnake();
   console.log(world.get_snake_head());
 }
 
