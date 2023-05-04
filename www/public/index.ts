@@ -39,16 +39,23 @@ async function start() {
     context.stroke();
   }
 
-  drawWorld();
-  drawSnake();
-  
-  setInterval(() => {
-    context.clearRect(0, 0, canvas.width, canvas.height);
+  function draw() {
     drawWorld();
     drawSnake();
-    world.update();
-  },
-  250);
+  }
+  
+  function update() {
+    setTimeout(() => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      draw();
+      world.update();
+      requestAnimationFrame(update); // the callback will be invoked before the nezt browser re-paint
+    },
+    200);
+  }
+
+  draw()
+  update();
 }
 
 start();
