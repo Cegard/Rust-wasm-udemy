@@ -38,7 +38,13 @@ impl World {
     pub fn get_snake_head(&self) -> usize {
         return self.snake.body[0].0;
     }
+
+    pub fn update(&mut self) {
+        self.snake.body[0].0 = (self.get_snake_head() + 1) % self.size.pow(2);
+    }
 }
+
+
 
 // cargo install wasm-pack --force --target x86_64-unknown-linux-musl
 //  wasm-pack build --target web

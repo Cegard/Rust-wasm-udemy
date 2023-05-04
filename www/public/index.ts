@@ -41,7 +41,14 @@ async function start() {
 
   drawWorld();
   drawSnake();
-  console.log(world.get_snake_head());
+  
+  setInterval(() => {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    drawWorld();
+    drawSnake();
+    world.update();
+  },
+  250);
 }
 
 start();
