@@ -1,5 +1,5 @@
 import init, {World} from 'snake_game_v1';
-import setDrawer from '../src/draw';
+import {setDrawer} from '../src/drawers';
 
 const TIMEOUT = 200;
 
