@@ -1,8 +1,6 @@
 import { World } from 'snake_game_v1';
 import {IDrawSnakeParams, IDrawWorldParams } from './models'
 
-interface IDrawParams extends IDrawSnakeParams, IDrawWorldParams {}
-
 const CELL_SIZE = 30;
 
 function drawWorld({context, worldSize}: IDrawWorldParams) {
@@ -37,5 +35,5 @@ export default function setDrawer(context: CanvasRenderingContext2D, world: Worl
   return () => {
     drawWorld({context, worldSize: world.size()});
     drawSnake({context, worldSize: world.size(), headIdx: world.get_snake_head()});
-  }
+  };
 }

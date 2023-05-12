@@ -1,18 +1,7 @@
 import init, {World} from 'snake_game_v1';
-import setDrawer from '../src/draw'
+import setDrawer from '../src/draw';
 
 const TIMEOUT = 200;
-
-
-
-  
-
-
-
-
-
-
-
 
 async function start() {
 

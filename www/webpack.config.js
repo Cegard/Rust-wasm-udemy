@@ -1,8 +1,10 @@
-import * as path from "path";
-import * as copy from "copy-webpack-plugin";
+// import * as path from "path";
+// import * as copy from "copy-webpack-plugin";
+const path = require("path");
+const copy = require("copy-webpack-plugin");
 
 module.exports = {
-  entry: "./public/bootstrap.ts",
+  entry: "./public/bootstrap.js",
   output: {
     path: path.resolve(__dirname, "public/static"),
     filename: "bootstrap.js"

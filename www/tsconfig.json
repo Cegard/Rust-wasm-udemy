@@ -7,8 +7,6 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
     "strict": true
   }
 }
