@@ -1,7 +1,7 @@
 import { World } from 'snake_game_v1';
-import {IDrawSnakeParams, IDrawWorldParams } from './models'
+import {DrawSnakeParams, DrawWorldParams } from './models'
 
-export function setDrawWorld({context, worldSize, cellSize}: IDrawWorldParams): () => void {
+export function setDrawWorld(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
   
   return () => {
@@ -17,7 +17,7 @@ export function setDrawWorld({context, worldSize, cellSize}: IDrawWorldParams): 
   };
 }
 
-export function drawSnake({context, headIdx, worldSize, cellSize}: IDrawSnakeParams) {
+export function drawSnake(...[context, headIdx, worldSize, cellSize]: DrawSnakeParams) {
   const headCol = headIdx % worldSize;
   const headRow = Math.floor(headIdx/worldSize);
 
@@ -33,10 +33,10 @@ export function drawSnake({context, headIdx, worldSize, cellSize}: IDrawSnakePar
 
 export function setDrawer(context: CanvasRenderingContext2D, world: World, cellSize: number): () => void {
   const worldSize = world.size()
-  const drawWorld = setDrawWorld({context, worldSize, cellSize});
+  const drawWorld = setDrawWorld(context, worldSize, cellSize);
 
   return () => {
     drawWorld();
-    drawSnake({context, worldSize, cellSize, headIdx: world.get_snake_head()});
+    drawSnake(context, world.get_snake_head(), worldSize, cellSize);
   };
 }

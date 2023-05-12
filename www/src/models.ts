@@ -1,9 +1,10 @@
-export interface IDrawWorldParams {
+export type DrawWorldParams = [
   context: CanvasRenderingContext2D,
   worldSize: number,
-  cellSize: number,
-}
+  cellSize: number
+];
 
-export interface IDrawSnakeParams extends IDrawWorldParams {
+export type DrawSnakeParams = [
+  ...drawWorldParams: DrawWorldParams,
   headIdx: number
-}
+]
