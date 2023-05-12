@@ -2,6 +2,7 @@ import init, {World} from 'snake_game_v1';
 import {setDrawer} from '../src/drawers';
 
 const TIMEOUT = 200;
+const CELL_SIZE = 40;
 
 async function start() {
 
@@ -9,13 +10,17 @@ async function start() {
 
   const world = World.new();
   const canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
-  const context = canvas.getContext("2d");
+  if (canvas === null) return
 
+  const context = canvas.getContext("2d");
   if (context === null) return
+
+  context.canvas.width = world.size() * CELL_SIZE;
+  context.canvas.height = world.size() * CELL_SIZE;
 
   const width = canvas.width;
   const height = canvas.height;
-  const draw = setDrawer(context, world);
+  const draw = setDrawer(context, world, CELL_SIZE);
   draw();
 
   function update(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, world: World, ) {

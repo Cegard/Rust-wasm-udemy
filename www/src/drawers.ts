@@ -1,40 +1,42 @@
 import { World } from 'snake_game_v1';
 import {IDrawSnakeParams, IDrawWorldParams } from './models'
 
-const CELL_SIZE = 30;
-
-export function drawWorld(context: CanvasRenderingContext2D, world: World) {
-  const dimensionSize = world.size() * CELL_SIZE;
+export function setDrawWorld({context, worldSize, cellSize}: IDrawWorldParams): () => void {
+  const dimentionSize = cellSize * cellSize;
   
-  context.beginPath();
-  Array.from(Array(world.size() + 1).keys()).map((position) => {
-    const pos = CELL_SIZE * position;
-    context.moveTo(0, pos);
-    context.lineTo(dimensionSize, pos);
-    context.moveTo(pos, 0);
-    context.lineTo(pos, dimensionSize);
+  return () => {
+    context.beginPath();
+    Array.from(Array(worldSize + 1).keys()).map((position) => {
+      const pos = cellSize * position;
+      context.moveTo(0, pos);
+      context.lineTo(dimentionSize, pos);
+      context.moveTo(pos, 0);
+      context.lineTo(pos, dimentionSize);
+    });
     context.stroke();
-  });
+  };
 }
 
-export function drawSnake({context, headIdx, worldSize}: IDrawSnakeParams) {
+export function drawSnake({context, headIdx, worldSize, cellSize}: IDrawSnakeParams) {
   const headCol = headIdx % worldSize;
   const headRow = Math.floor(headIdx/worldSize);
 
   context.beginPath();
   context.fillRect(
-    headCol * CELL_SIZE,
-    headRow * CELL_SIZE,
-    CELL_SIZE,
-    CELL_SIZE
+    headCol * cellSize,
+    headRow * cellSize,
+    cellSize,
+    cellSize
   );
   context.stroke();
 }
 
-export function setDrawer(context: CanvasRenderingContext2D, world: World): () => void {
-  
+export function setDrawer(context: CanvasRenderingContext2D, world: World, cellSize: number): () => void {
+  const worldSize = world.size()
+  const drawWorld = setDrawWorld({context, worldSize, cellSize});
+
   return () => {
-    drawWorld(context, world);
-    drawSnake({context, worldSize: world.size(), headIdx: world.get_snake_head()});
+    drawWorld();
+    drawSnake({context, worldSize, cellSize, headIdx: world.get_snake_head()});
   };
 }
