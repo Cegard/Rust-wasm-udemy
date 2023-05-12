@@ -1,61 +1,44 @@
-import init, { World } from 'snake_game_v1';
+import init, {World} from 'snake_game_v1';
+import setDrawer from '../src/draw'
+
+const TIMEOUT = 200;
+
+
+
+  
+
+
+
+
+
+
+
 
 async function start() {
-  const CELL_SIZE = 30;
 
   await init();
 
   const world = World.new();
-  const worldSize = world.size();
-  const dimensionSize = CELL_SIZE * worldSize;
-  const canvas = document.getElementById("game-canvas");
+  const canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
   const context = canvas.getContext("2d");
-  
-  canvas.width = canvas.height = dimensionSize;
 
-  function drawWorld() {
-    context.beginPath();
-    Array.from(Array(worldSize + 1).keys()).map((position) => {
-      context.moveTo(CELL_SIZE * position, 0);
-      context.lineTo(CELL_SIZE * position, dimensionSize);
-      context.moveTo(0, CELL_SIZE * position);
-      context.lineTo(dimensionSize, CELL_SIZE * position);
-    });
-    context.stroke();
-  }
+  if (context === null) return
 
-  function drawSnake() {
-    const headIdx = world.get_snake_head();
-    const headCol = headIdx % worldSize;
-    const headRow = Math.floor(headIdx/worldSize);
+  const width = canvas.width;
+  const height = canvas.height;
+  const draw = setDrawer(context, world);
+  draw();
 
-    context.beginPath();
-    context.fillRect(
-      headCol * CELL_SIZE,
-      headRow * CELL_SIZE,
-      CELL_SIZE,
-      CELL_SIZE
-    );
-    context.stroke();
-  }
-
-  function draw() {
-    drawWorld();
-    drawSnake();
-  }
-  
-  function update() {
+  function update(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement, world: World, ) {
     setTimeout(() => {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      draw();
+    context.clearRect(0, 0, width, height);
       world.update();
-      requestAnimationFrame(update); // the callback will be invoked before the nezt browser re-paint
-    },
-    200);
+      draw();
+      requestAnimationFrame(() => update(context, canvas, world)); // the callback will be invoked before the nezt browser re-paint
+   }, TIMEOUT);
   }
 
-  draw()
-  update();
+  update(context, canvas, world);
 }
 
 start();
