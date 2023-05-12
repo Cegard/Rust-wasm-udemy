@@ -2,6 +2,10 @@
 name = "snake_game_v1"
 version = "0.1.0"
 edition = "2021"
+description = "Snake game with webassembly"
+license = "MIT"
+repository = "https://github.com/Cegard/Rust-wasm-udemy"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
