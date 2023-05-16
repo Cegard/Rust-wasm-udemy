@@ -1,5 +1,6 @@
-import init, {World} from 'snake_game_v1';
-import {setDrawer} from '../src/drawers';
+import init, { World } from 'snake_game_v1';
+import { setDrawer } from '../src/drawers';
+import { randomInt } from '../src/helpers';
 
 function update(
   width: number,
@@ -8,7 +9,7 @@ function update(
   world: World,
   draw: () => void
 ) {
-  const TIMEOUT = 100;
+  const SPEED = 6; // tiles per second
 
   function updateDelayed() {
     setTimeout(() => {
@@ -16,7 +17,7 @@ function update(
       world.update();
       draw();
       requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
-    }, TIMEOUT);
+    }, 1000 / SPEED);
   }
   
   updateDelayed();
@@ -24,10 +25,12 @@ function update(
 
 async function start() {
   const CELL_SIZE = 35;
+  const WORLD_WIDTH = 8;
+  const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();
 
-  const world = World.new();
+  const world = World.new(WORLD_WIDTH, snakeSpawnIdx);
   
   const canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
   if (canvas === null) return;
