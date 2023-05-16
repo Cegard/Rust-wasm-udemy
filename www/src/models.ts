@@ -1,10 +1,10 @@
-export type DrawWorldParams = [
-  context: CanvasRenderingContext2D,
-  worldSize: number,
-  cellSize: number
+export type DrawWorldParams = readonly [
+  CanvasRenderingContext2D,
+  number,
+  number
 ];
 
-export type DrawSnakeParams = [
-  ...drawWorldParams: DrawWorldParams,
-  headIdx: number
-]
+export type DrawSnakeParams = readonly [
+  ...DrawWorldParams,
+  number
+];
