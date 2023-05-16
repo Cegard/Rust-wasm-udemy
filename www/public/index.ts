@@ -26,11 +26,12 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
+  const DIRECTION = 0;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();
 
-  const world = World.new(WORLD_WIDTH, snakeSpawnIdx);
+  const world = World.new(WORLD_WIDTH, snakeSpawnIdx, DIRECTION);
   
   const canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
   if (canvas === null) return;
