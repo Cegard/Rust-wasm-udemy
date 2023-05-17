@@ -9,7 +9,7 @@ function update(
   world: World,
   draw: () => void
 ) {
-  const SPEED = 6; // tiles per second
+  const SPEED = 2; // tiles per second
 
   function updateDelayed() {
     setTimeout(() => {
@@ -26,7 +26,7 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const DIRECTION = 3;
+  const DIRECTION = 0;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();

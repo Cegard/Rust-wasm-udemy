@@ -61,13 +61,16 @@ impl World {
     }
 
     pub fn update(&mut self) {
+        let signed_size: isize = self.size as isize;
+        let signed_snake_idx: isize = self.snake.body[0].0 as isize;
+
         let get_next_idx = |tiles_to_move: isize|
-                (self.snake.body[0].0 as isize + tiles_to_move) as usize % self.size.pow(2);
+                (signed_snake_idx + tiles_to_move).rem_euclid(signed_size.pow(2)) as usize;
 
         match self.snake.direction {
-            Direction::Up => self.snake.body[0].0 = get_next_idx(-(self.size as isize)),
+            Direction::Up => self.snake.body[0].0 = get_next_idx(-signed_size),
             Direction::Right => self.snake.body[0].0 = get_next_idx(1) ,
-            Direction::Down => self.snake.body[0].0 = get_next_idx(self.size.try_into().unwrap()),
+            Direction::Down => self.snake.body[0].0 = get_next_idx(signed_size),
             Direction::Left => self.snake.body[0].0 = get_next_idx(-1),
         }
     }
