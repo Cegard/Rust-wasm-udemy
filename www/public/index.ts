@@ -26,7 +26,7 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const DIRECTION = 0;
+  const DIRECTION = 3;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();

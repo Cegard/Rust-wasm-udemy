@@ -64,14 +64,17 @@ impl World {
         let signed_size: isize = self.size as isize;
         let signed_snake_idx: isize = self.snake.body[0].0 as isize;
 
-        let get_next_idx = |tiles_to_move: isize|
-                (signed_snake_idx + tiles_to_move).rem_euclid(signed_size.pow(2)) as usize;
+        let get_next_idx = |rows_to_move: isize, cols_to_move: isize|
+            (
+                (signed_size * ((signed_snake_idx + rows_to_move) / signed_size))
+                + (signed_snake_idx + cols_to_move).rem_euclid(signed_size)
+            ) as usize;
 
         match self.snake.direction {
-            Direction::Up => self.snake.body[0].0 = get_next_idx(-signed_size),
-            Direction::Right => self.snake.body[0].0 = get_next_idx(1) ,
-            Direction::Down => self.snake.body[0].0 = get_next_idx(signed_size),
-            Direction::Left => self.snake.body[0].0 = get_next_idx(-1),
+            Direction::Up => self.snake.body[0].0 = get_next_idx(-signed_size, 0),
+            Direction::Right => self.snake.body[0].0 = get_next_idx(0, 1) ,
+            Direction::Down => self.snake.body[0].0 = get_next_idx(signed_size, 0),
+            Direction::Left => self.snake.body[0].0 = get_next_idx(0, -1),
         }
     }
 }
