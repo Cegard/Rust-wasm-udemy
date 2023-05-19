@@ -44,6 +44,7 @@ async function start() {
   const draw = setDrawer(context, world, CELL_SIZE);
 
   draw();
+  console.log("init ", world.get_snake_head())
   update(canvas.height, canvas.width, context, world, draw);
 }
 
