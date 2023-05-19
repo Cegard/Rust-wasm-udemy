@@ -1,5 +1,5 @@
 import { World } from 'snake_game_v1';
-import {DrawSnakeParams, DrawWorldParams } from './models'
+import {DrawSnakeParams, DrawWorldParams } from './types'
 
 export function setDrawWorld(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
