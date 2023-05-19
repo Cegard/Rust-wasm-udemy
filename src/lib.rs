@@ -38,13 +38,13 @@ impl World {
     pub fn new(world_size: usize, snake_idx: usize, direction: usize) -> World {
         let snake_direction: Direction;
 
-        match direction {
-            0 => snake_direction = Direction::Up,
-            1 => snake_direction = Direction::Right,
-            2 => snake_direction = Direction::Down,
-            3 => snake_direction = Direction::Left,
-            _ => panic!("Option not covered")
-        }
+        snake_direction = match direction {
+            0 => Direction::Up,
+            1 => Direction::Right,
+            2 => Direction::Down,
+            3 => Direction::Left,
+            _ => panic!("Option not recognized")
+        };
 
         return World {
             size: world_size,
@@ -71,12 +71,12 @@ impl World {
                 + (signed_snake_idx + cols_to_move).rem_euclid(signed_size)
             ) as usize;
 
-        match self.snake.direction {
-            Direction::Up => self.snake.body[0].0 = get_next_idx(-1, 0),
-            Direction::Right => self.snake.body[0].0 = get_next_idx(0, 1) ,
-            Direction::Down => self.snake.body[0].0 = get_next_idx(1, 0),
-            Direction::Left => self.snake.body[0].0 = get_next_idx(0, -1),
-        }
+        self.snake.body[0].0 = match self.snake.direction {
+            Direction::Up => get_next_idx(-1, 0),
+            Direction::Right => get_next_idx(0, 1) ,
+            Direction::Down => get_next_idx(1, 0),
+            Direction::Left => get_next_idx(0, -1),
+        };
     }
 }
 
