@@ -41,18 +41,17 @@ async function start() {
 
   const world = World.new(WORLD_WIDTH, snakeSpawnIdx, DIRECTION);
   
-  const canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
+  const canvas = <HTMLCanvasElement> document.getElementById('game-canvas');
   if (canvas === null) return;
   
   canvas.height = canvas.width = world.size() * CELL_SIZE;
 
-  const context = canvas.getContext("2d");
+  const context = canvas.getContext('2d');
   if (context === null) return;
   
   const draw = setDrawer(context, world, CELL_SIZE);
 
   draw();
-  console.log("init ", world.get_snake_head())
   update(canvas.height, canvas.width, context, world, draw);
 
   document.addEventListener('keydown', e => {
