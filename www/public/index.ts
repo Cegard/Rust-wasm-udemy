@@ -56,9 +56,10 @@ async function start() {
   update(canvas.height, canvas.width, context, world, draw);
 
   document.addEventListener('keydown', e => {
-    
-    if (Object.values(ARROW_KEYS_CODES).includes(e.code))
-      directionModifiers[e.code](world);
+    let move_snake = directionModifiers[e.code] ?? false;
+
+    if (move_snake)
+      move_snake(world);
   });
 }
 
