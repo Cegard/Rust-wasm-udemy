@@ -1,13 +1,13 @@
 import init, { World, Direction } from 'snake_game_v1';
 import { setDrawer } from '../src/drawers';
 import { randomInt } from '../src/helpers';
-import { ARROW_KEYS_CODES } from '../src/consts';
+import { DirectionsType } from '../src/types';
 
-const directionModifiers = {
-  [ARROW_KEYS_CODES.up]: (world: World) => { world.change_snake_direction(Direction.Up) },
-  [ARROW_KEYS_CODES.right]: (world: World) => { world.change_snake_direction(Direction.Right) },
-  [ARROW_KEYS_CODES.down]: (world: World) => { world.change_snake_direction(Direction.Down) },
-  [ARROW_KEYS_CODES.left]: (world: World) => { world.change_snake_direction(Direction.Left) },
+const directions: DirectionsType = {
+  ArrowUp: Direction.Up,
+  ArrowRight: Direction.Right,
+  ArrowDown: Direction.Down,
+  ArrowLeft: Direction.Left,
 }
 
 function update(
@@ -34,12 +34,12 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const DIRECTION = Direction.Right;
+  let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();
 
-  const world = World.new(WORLD_WIDTH, snakeSpawnIdx, DIRECTION);
+  const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction);
   
   const canvas = <HTMLCanvasElement> document.getElementById('game-canvas');
   if (canvas === null) return;
@@ -55,10 +55,8 @@ async function start() {
   update(canvas.height, canvas.width, context, world, draw);
 
   document.addEventListener('keydown', e => {
-    let move_snake = directionModifiers[e.code] ?? false;
-
-    if (move_snake)
-      move_snake(world);
+    direction = directions[e.code] ?? direction;
+    world.change_snake_direction(direction);
   });
 }
 
