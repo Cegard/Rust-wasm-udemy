@@ -31,6 +31,18 @@ function update(
   updateDelayed();
 }
 
+function build_snake(
+  buffer: ArrayBuffer,
+  world: World
+): Uint32Array {
+
+  return new Uint32Array(
+    buffer,
+    world.get_snake_cells(),
+    world.get_snake_length()
+  )
+}
+
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
@@ -50,34 +62,8 @@ async function start() {
 
   const context = canvas.getContext('2d');
   if (context === null) return;
-  
-  const snakeCellPtr = world.get_snake_cells();
-  const snakeLen = world.get_snake_length();
-  const snakeCells = new Uint32Array(
-    wasm.memory.buffer,
-    snakeCellPtr,
-    snakeLen
-  );
 
-  // ToDo
-  // remove console.log here
-  console.log(">> Original:", snakeCells);
-  
-    world.mess_it_up();
-
-  const snakeCellPtr_ = world.get_snake_cells();
-  const snakeLen_ = world.get_snake_length();
-  const snakeCells_ = new Uint32Array(
-    wasm.memory.buffer,
-    snakeCellPtr,
-    snakeLen
-  );
-
-  // ToDo
-  // remove console.log here
-  console.log(">> Messed up:", snakeCells_);
-
-  const draw = setDrawer(context, world, CELL_SIZE);
+  const draw = setDrawer(context, world.size(), CELL_SIZE, build_snake(wasm.memory.buffer, world));
 
   draw();
   update(canvas.height, canvas.width, context, world, draw);

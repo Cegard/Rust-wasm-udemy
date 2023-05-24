@@ -59,10 +59,12 @@ impl World {
     }
 
     pub fn size(&self) -> usize {
+        
         return self.size;
     }
 
     pub fn get_snake_head(&self) -> usize {
+
         return self.snake.get_head_idx();
     }
 
@@ -73,10 +75,6 @@ impl World {
     pub fn get_snake_length(&self) -> usize {
 
         return self.snake.body.len();
-    }
-
-    pub fn mess_it_up(&mut self) {
-        self.snake.body = vec![SnakeCell(2210)];
     }
 
     // *const is a raw pointer, not a reference (&)

@@ -8,7 +8,7 @@ export type DrawWorldParams = readonly [
 
 export type DrawSnakeParams = readonly [
   ...DrawWorldParams,
-  number
+  Uint32Array
 ];
 
 export type DirectionsType = {
