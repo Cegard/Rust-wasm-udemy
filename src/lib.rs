@@ -12,10 +12,10 @@ pub enum Direction {
     Left
 }
 
-pub struct SnakeSection(usize);
+pub struct SnakeCell(usize);
 
 struct Snake {
-    body: Vec<SnakeSection>,
+    body: Vec<SnakeCell>,
     direction: Direction
 }
 
@@ -29,7 +29,7 @@ impl Snake {
     fn new(spawn_idx: usize, direction: Direction, length: usize) -> Snake {
 
         return Snake {
-            body: (0..length.max(1)).map(|i| SnakeSection(spawn_idx - i)).collect(),
+            body: (0..length.max(1)).map(|i| SnakeCell(spawn_idx - i)).collect(),
             direction
         };
     }
@@ -75,9 +75,13 @@ impl World {
         return self.snake.body.len();
     }
 
+    pub fn mess_it_up(&mut self) {
+        self.snake.body = vec![SnakeCell(2210)];
+    }
+
     // *const is a raw pointer, not a reference (&)
     // borrrowing rules don't apply here
-    pub fn get_snake_cells(&self) -> *const SnakeSection {
+    pub fn get_snake_cells(&self) -> *const SnakeCell {
 
         return self.snake.body.as_ptr(); 
     }

@@ -52,7 +52,7 @@ async function start() {
   if (context === null) return;
   
   const snakeCellPtr = world.get_snake_cells();
-  let snakeLen = world.get_snake_length();
+  const snakeLen = world.get_snake_length();
   const snakeCells = new Uint32Array(
     wasm.memory.buffer,
     snakeCellPtr,
@@ -61,7 +61,21 @@ async function start() {
 
   // ToDo
   // remove console.log here
-  console.log(snakeCells);
+  console.log(">> Original:", snakeCells);
+  
+    world.mess_it_up();
+
+  const snakeCellPtr_ = world.get_snake_cells();
+  const snakeLen_ = world.get_snake_length();
+  const snakeCells_ = new Uint32Array(
+    wasm.memory.buffer,
+    snakeCellPtr,
+    snakeLen
+  );
+
+  // ToDo
+  // remove console.log here
+  console.log(">> Messed up:", snakeCells_);
 
   const draw = setDrawer(context, world, CELL_SIZE);
 
