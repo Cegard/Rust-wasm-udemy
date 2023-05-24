@@ -26,9 +26,10 @@ pub struct World {
 }
 
 impl Snake {
-    fn new(spawn_idx: usize, direction: Direction) -> Snake {
+    fn new(spawn_idx: usize, direction: Direction, length: usize) -> Snake {
+
         return Snake {
-            body: vec!(SnakeSection(spawn_idx)),
+            body: (0..length.max(1)).map(|i| SnakeSection(spawn_idx - i)).collect(),
             direction
         };
     }
@@ -49,11 +50,11 @@ impl Snake {
 
 #[wasm_bindgen]
 impl World {
-    pub fn new(world_size: usize, snake_idx: usize, direction: Direction) -> World {
+    pub fn new(world_size: usize, snake_idx: usize, direction: Direction, snake_length: usize) -> World {
 
         return World {
             size: world_size,
-            snake: Snake::new(snake_idx, direction)
+            snake: Snake::new(snake_idx, direction, snake_length)
         };
     }
 

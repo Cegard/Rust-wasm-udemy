@@ -34,12 +34,14 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
+  const SNAKE_LENGTH = 1
+
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
   await init();
 
-  const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction);
+  const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction, SNAKE_LENGTH);
   
   const canvas = <HTMLCanvasElement> document.getElementById('game-canvas');
   if (canvas === null) return;
