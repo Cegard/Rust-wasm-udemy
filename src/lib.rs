@@ -12,7 +12,7 @@ pub enum Direction {
     Left
 }
 
-struct SnakeSection(usize);
+pub struct SnakeSection(usize);
 
 struct Snake {
     body: Vec<SnakeSection>,
@@ -68,6 +68,18 @@ impl World {
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
         self.snake.change_direction(direction);
+    }
+
+    pub fn get_snake_length(&self) -> usize {
+
+        return self.snake.body.len();
+    }
+
+    // *const is a raw pointer, not a reference (&)
+    // borrrowing rules don't apply here
+    pub fn get_snake_cells(&self) -> *const SnakeSection {
+
+        return self.snake.body.as_ptr(); 
     }
 
     pub fn update(&mut self) {

@@ -34,12 +34,12 @@ function update(
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const SNAKE_LENGTH = 1
+  const SNAKE_LENGTH = 4
 
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
 
-  await init();
+  const wasm = await init();
 
   const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction, SNAKE_LENGTH);
   
@@ -51,6 +51,18 @@ async function start() {
   const context = canvas.getContext('2d');
   if (context === null) return;
   
+  const snakeCellPtr = world.get_snake_cells();
+  let snakeLen = world.get_snake_length();
+  const snakeCells = new Uint32Array(
+    wasm.memory.buffer,
+    snakeCellPtr,
+    snakeLen
+  );
+
+  // ToDo
+  // remove console.log here
+  console.log(snakeCells);
+
   const draw = setDrawer(context, world, CELL_SIZE);
 
   draw();
