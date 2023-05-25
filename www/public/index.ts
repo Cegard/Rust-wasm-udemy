@@ -54,14 +54,14 @@ async function start() {
   const canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
   if (canvas === null) return;
 
-  canvas.height = canvas.width = world.size() * CELL_SIZE;
+  canvas.height = canvas.width = world.length() * CELL_SIZE;
 
   const context = canvas.getContext("2d");
   if (context === null) return;
 
   const draw = setDrawer(
     context,
-    world.size(),
+    world.length(),
     CELL_SIZE,
     build_snake(wasm.memory.buffer, world)
   );

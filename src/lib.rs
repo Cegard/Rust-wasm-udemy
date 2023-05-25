@@ -21,7 +21,7 @@ struct Snake {
 
 #[wasm_bindgen]
 pub struct World {
-    size: isize,
+    length: isize,
     snake: Snake
 }
 
@@ -50,17 +50,17 @@ impl Snake {
 
 #[wasm_bindgen]
 impl World {
-    pub fn new(world_size: usize, snake_idx: usize, direction: Direction, snake_length: usize) -> World {
+    pub fn new(world_length: usize, snake_idx: usize, direction: Direction, snake_length: usize) -> World {
         
         return World {
-            size: world_size as isize,
+            length: world_length as isize,
             snake: Snake::new(snake_idx, direction, snake_length)
         };
     }
 
-    pub fn size(&self) -> usize {
+    pub fn length(&self) -> usize {
         
-        return self.size as usize;
+        return self.length as usize;
     }
 
     pub fn get_snake_head(&self) -> usize {
@@ -85,20 +85,28 @@ impl World {
     }
 
     pub fn step(&mut self) {
-        self.snake.set_head(SnakeCell(match self.snake.direction {
-            Direction::Up => self.calc_next_cell(-1, 0, self.get_snake_head() as isize),
-            Direction::Right => self.calc_next_cell(0, 1, self.get_snake_head() as isize),
-            Direction::Down => self.calc_next_cell(1, 0, self.get_snake_head() as isize),
-            Direction::Left => self.calc_next_cell(0, -1, self.get_snake_head() as isize),
-        }));
-    }
+        let last_idx = self.length.pow(2);
+        let snake_head_idx = self.snake.get_head_idx() as isize;
+        let vert_thresholds = [-1, last_idx];
+        let hor_thresholds = [
+            snake_head_idx/self.length * self.length - 1,
+            snake_head_idx/self.length * self.length + self.length
+        ];
 
-    fn calc_next_cell(&self, rows_to_move: isize, cols_to_move: isize, snake_idx: isize) -> usize {
-        return (
-            (self.size * ((snake_idx / self.size) + rows_to_move))
-            .rem_euclid(self.size.pow(2))
-            + (snake_idx + cols_to_move).rem_euclid(self.size)
-        ) as usize;
+        self.snake.set_head(SnakeCell(match self.snake.direction {
+            Direction::Up => ((snake_head_idx - self.length) > vert_thresholds[0])
+                             .then_some((snake_head_idx - self.length) as usize)
+                             .unwrap_or((last_idx - self.length + snake_head_idx) as usize),
+            Direction::Right => ((snake_head_idx + 1) < hor_thresholds[1])
+                                .then_some(self.snake.get_head_idx() + 1)
+                                .unwrap_or((snake_head_idx + 1 - self.length) as usize),
+            Direction::Down => ((snake_head_idx + self.length) < vert_thresholds[1])
+                               .then_some((snake_head_idx + self.length) as usize)
+                               .unwrap_or((snake_head_idx + self.length - last_idx) as usize),
+            Direction::Left => ((snake_head_idx - 1) > hor_thresholds[0])
+                               .then_some(self.snake.get_head_idx() - 1)
+                               .unwrap_or((snake_head_idx + self.length - 1) as usize)
+        }));
     }
 }
 
