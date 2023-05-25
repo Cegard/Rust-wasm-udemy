@@ -22,7 +22,7 @@ function update(
   function updateDelayed() {
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
-      world.update();
+      world.step();
       draw();
       requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);

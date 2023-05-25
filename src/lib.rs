@@ -21,7 +21,7 @@ struct Snake {
 
 #[wasm_bindgen]
 pub struct World {
-    size: usize,
+    size: isize,
     snake: Snake
 }
 
@@ -43,24 +43,24 @@ impl Snake {
         return self.body[0].0;
     }
 
-    fn set_head_idx(&mut self, idx: usize) {
-        self.body[0].0 = idx;
+    fn set_head(&mut self, head: SnakeCell) {
+        self.body[0] = head;
     }
 }
 
 #[wasm_bindgen]
 impl World {
     pub fn new(world_size: usize, snake_idx: usize, direction: Direction, snake_length: usize) -> World {
-
+        
         return World {
-            size: world_size,
+            size: world_size as isize,
             snake: Snake::new(snake_idx, direction, snake_length)
         };
     }
 
     pub fn size(&self) -> usize {
         
-        return self.size;
+        return self.size as usize;
     }
 
     pub fn get_snake_head(&self) -> usize {
@@ -84,25 +84,21 @@ impl World {
         return self.snake.body.as_ptr(); 
     }
 
-    pub fn update(&mut self) {
-        let signed_size: isize = self.size as isize;
-        let signed_snake_idx: isize = self.snake.get_head_idx() as isize;
+    pub fn step(&mut self) {
+        self.snake.set_head(SnakeCell(match self.snake.direction {
+            Direction::Up => self.calc_next_cell(-1, 0, self.get_snake_head() as isize),
+            Direction::Right => self.calc_next_cell(0, 1, self.get_snake_head() as isize),
+            Direction::Down => self.calc_next_cell(1, 0, self.get_snake_head() as isize),
+            Direction::Left => self.calc_next_cell(0, -1, self.get_snake_head() as isize),
+        }));
+    }
 
-        let get_next_idx = |rows_to_move: isize, cols_to_move: isize|
-            (
-                (signed_size * ((signed_snake_idx / signed_size) + rows_to_move))
-                .rem_euclid(signed_size.pow(2))
-                + (signed_snake_idx + cols_to_move).rem_euclid(signed_size)
-            ) as usize;
-
-        let next_snake_idx = match self.snake.direction {
-            Direction::Up => get_next_idx(-1, 0),
-            Direction::Right => get_next_idx(0, 1) ,
-            Direction::Down => get_next_idx(1, 0),
-            Direction::Left => get_next_idx(0, -1),
-        };
-
-        self.snake.set_head_idx(next_snake_idx);
+    fn calc_next_cell(&self, rows_to_move: isize, cols_to_move: isize, snake_idx: isize) -> usize {
+        return (
+            (self.size * ((snake_idx / self.size) + rows_to_move))
+            .rem_euclid(self.size.pow(2))
+            + (snake_idx + cols_to_move).rem_euclid(self.size)
+        ) as usize;
     }
 }
 
