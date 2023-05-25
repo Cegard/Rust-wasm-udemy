@@ -17,10 +17,12 @@ export function setDrawWorld(...[context, worldSize, cellSize]: DrawWorldParams)
 }
 
 export function drawSnake(...[context, worldSize, cellSize, cells]: DrawSnakeParams) {
-
-  cells.forEach(cell => {
+  
+  cells.forEach((cell, i) => {
     const headCol = cell % worldSize;
     const headRow = Math.floor(cell/worldSize);
+
+    context.fillStyle = i === 0 ? "#7878db" : "#000000";
 
     context.beginPath();
     context.fillRect(
