@@ -26,10 +26,18 @@ pub struct World {
 }
 
 impl Snake {
-    fn new(spawn_idx: usize, direction: Direction, length: usize) -> Snake {
+    fn new(spawn_idx: usize, direction: Direction, length: usize, world_length: usize) -> Snake {
+        let mut body = Vec::<SnakeCell>::new();
+        let row = spawn_idx/world_length * world_length;
+        let i_spawn_idx = spawn_idx as isize;
+        let i_world_length = world_length as isize;
+
+        for i in 0..(length as isize).max(1) {
+            body.push(SnakeCell(row + (i_spawn_idx - i).rem_euclid(i_world_length) as usize));
+        }
 
         return Snake {
-            body: (0..length.max(1)).map(|i| SnakeCell(spawn_idx - i)).collect(),
+            body,
             direction
         };
     }
@@ -41,7 +49,7 @@ impl World {
         
         return World {
             length: world_length as isize,
-            snake: Snake::new(snake_idx, direction, snake_length)
+            snake: Snake::new(snake_idx, direction, snake_length, world_length)
         };
     }
 
