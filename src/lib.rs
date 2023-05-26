@@ -94,18 +94,18 @@ impl World {
         ];
 
         self.snake.set_head(SnakeCell(match self.snake.direction {
-            Direction::Up => ((snake_head_idx - self.length) > vert_thresholds[0])
-                             .then_some((snake_head_idx - self.length) as usize)
-                             .unwrap_or((last_idx - self.length + snake_head_idx) as usize),
-            Direction::Right => ((snake_head_idx + 1) < hor_thresholds[1])
-                                .then_some(self.snake.get_head_idx() + 1)
-                                .unwrap_or((snake_head_idx + 1 - self.length) as usize),
-            Direction::Down => ((snake_head_idx + self.length) < vert_thresholds[1])
-                               .then_some((snake_head_idx + self.length) as usize)
-                               .unwrap_or((snake_head_idx + self.length - last_idx) as usize),
-            Direction::Left => ((snake_head_idx - 1) > hor_thresholds[0])
-                               .then_some(self.snake.get_head_idx() - 1)
-                               .unwrap_or((snake_head_idx + self.length - 1) as usize)
+            Direction::Up => if (snake_head_idx - self.length) > vert_thresholds[0]
+                             { (snake_head_idx - self.length) as usize }
+                             else { (last_idx - self.length + snake_head_idx) as usize }
+            Direction::Right => if (snake_head_idx + 1) < hor_thresholds[1]
+                                { self.snake.get_head_idx() + 1 }
+                                else { (snake_head_idx + 1 - self.length) as usize }
+            Direction::Down => if (snake_head_idx + self.length) < vert_thresholds[1]
+                               { (snake_head_idx + self.length) as usize }
+                               else { (snake_head_idx + self.length - last_idx) as usize }
+            Direction::Left => if (snake_head_idx - 1) > hor_thresholds[0]
+                               { self.snake.get_head_idx() - 1 }
+                               else { (snake_head_idx + self.length - 1) as usize }
         }));
     }
 }
