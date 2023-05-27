@@ -4,6 +4,16 @@ use wee_alloc::WeeAlloc;
 #[global_allocator]
 static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
+pub struct SnakeCell(usize);
+
+struct Snake {
+    body: Vec<SnakeCell>,
+    direction: Direction
+}
+struct CellsIdxsCalculator {
+    calc_cells_idxs: Box<dyn Fn(isize) -> usize + 'static>,
+}
+
 #[wasm_bindgen]
 pub enum Direction {
     Up,
@@ -12,44 +22,46 @@ pub enum Direction {
     Left
 }
 
-pub struct SnakeCell(usize);
-
-struct Snake {
-    body: Vec<SnakeCell>,
-    direction: Direction
-}
-
 #[wasm_bindgen]
 pub struct World {
     length: isize,
     snake: Snake
 }
 
-impl Snake {
-    fn new(spawn_idx: usize, direction: Direction, length: usize, world_length: usize) -> Snake {
-        let mut body = Vec::<SnakeCell>::new();
-        let row = spawn_idx/world_length * world_length;
-        let i_spawn_idx = spawn_idx as isize;
-        let i_world_length = world_length as isize;
-
-        for i in 0..(length as isize).max(1) {
-            body.push(SnakeCell(row + (i_spawn_idx - i).rem_euclid(i_world_length) as usize));
-        }
-
-        return Snake {
-            body,
-            direction
-        };
-    }
-}
-
 #[wasm_bindgen]
 impl World {
-    pub fn new(world_length: usize, snake_idx: usize, direction: Direction, snake_length: usize) -> World {
-        
+    pub fn new(
+            world_length: usize,
+            snake_idx: usize,
+            direction: Direction,
+            snake_length: usize
+        ) ->World {
+        let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
+        let i_snake_idx = snake_idx as isize;
+        let mut idx_calculator = CellsIdxsCalculator {
+            calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize)
+        };
+
+        if snake_length > (snake_idx % world_length) + 1 {
+            let row = snake_idx/world_length * world_length;
+            let i_world_length = world_length as isize;
+            idx_calculator = CellsIdxsCalculator {
+                calc_cells_idxs: Box::new(
+                    move |i: isize| row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
+                )
+            };
+        }
+
+        for i in 1..(snake_length as isize).max(1) {
+            body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
+        }
+
         return World {
             length: world_length as isize,
-            snake: Snake::new(snake_idx, direction, snake_length, world_length)
+            snake: Snake {
+                body,
+                direction
+            }
         };
     }
 
@@ -92,12 +104,15 @@ impl World {
             Direction::Up => if (snake_head_idx - self.length) > vert_thresholds[0]
                             { (snake_head_idx - self.length) as usize }
                             else { (last_idx - self.length + snake_head_idx) as usize }
+
             Direction::Right => if (snake_head_idx + 1) < hor_thresholds[1]
                                 { self.snake.body[0].0 + 1 }
                                 else { (snake_head_idx + 1 - self.length) as usize }
+
             Direction::Down => if (snake_head_idx + self.length) < vert_thresholds[1]
                             { (snake_head_idx + self.length) as usize }
                             else { (snake_head_idx + self.length - last_idx) as usize }
+
             Direction::Left => if (snake_head_idx - 1) > hor_thresholds[0]
                             { self.snake.body[0].0 - 1 }
                             else { (snake_head_idx + self.length - 1) as usize }

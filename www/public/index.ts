@@ -42,7 +42,7 @@ function build_snake(buffer: ArrayBuffer, world: World): Uint32Array {
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const SNAKE_LENGTH = 4;
+  const SNAKE_LENGTH = 5;
 
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
@@ -71,7 +71,8 @@ async function start() {
 
   document.addEventListener("keydown", (e) => {
     direction = directions[e.code] ?? direction;
-    world.change_snake_direction(direction);
+    let new_dir = world.change_snake_direction(direction);
+    console.log(new_dir)
   });
 }
 
