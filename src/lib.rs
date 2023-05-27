@@ -10,6 +10,7 @@ struct Snake {
     body: Vec<SnakeCell>,
     direction: Direction
 }
+
 struct CellsIdxsCalculator {
     calc_cells_idxs: Box<dyn Fn(isize) -> usize + 'static>,
 }
@@ -31,26 +32,13 @@ pub struct World {
 #[wasm_bindgen]
 impl World {
     pub fn new(
-            world_length: usize,
-            snake_idx: usize,
-            direction: Direction,
-            snake_length: usize
-        ) ->World {
+        world_length: usize,
+        snake_idx: usize,
+        direction: Direction,
+        snake_length: usize
+    ) -> World {
         let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
-        let i_snake_idx = snake_idx as isize;
-        let mut idx_calculator = CellsIdxsCalculator {
-            calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize)
-        };
-
-        if snake_length > (snake_idx % world_length) + 1 {
-            let row = snake_idx/world_length * world_length;
-            let i_world_length = world_length as isize;
-            idx_calculator = CellsIdxsCalculator {
-                calc_cells_idxs: Box::new(
-                    move |i: isize| row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
-                )
-            };
-        }
+        let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
 
         for i in 1..(snake_length as isize).max(1) {
             body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
@@ -129,6 +117,30 @@ impl World {
             let temp_idx = self.snake.body[i].0;
             self.snake.body[i].0 = prev_idx;
             prev_idx = temp_idx;
+        }
+    }
+
+    fn get_idxs_calculator(
+        snake_idx: usize,
+        snake_length: usize,
+        world_length: usize
+    ) -> CellsIdxsCalculator {
+        let i_snake_idx = snake_idx as isize;
+
+        if snake_length <= (snake_idx % world_length) + 1 {
+
+            return CellsIdxsCalculator {
+                calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize)
+            };
+        } else {
+            let row = snake_idx/world_length * world_length;
+            let i_world_length = world_length as isize;
+
+            return CellsIdxsCalculator {
+                calc_cells_idxs: Box::new(
+                    move |i: isize| row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
+                )
+            };
         }
     }
 }
