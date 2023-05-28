@@ -44,23 +44,21 @@ impl World {
             body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
         }
 
-        return World {
+        World {
             length: world_length as isize,
             snake: Snake {
                 body,
                 direction
             }
-        };
+        }
     }
 
     pub fn length(&self) -> usize {
-        
-        return self.length as usize;
+        self.length as usize
     }
 
     pub fn get_snake_head(&self) -> usize {
-
-        return self.snake.body[0].0;
+        self.snake.body[0].0
     }
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
@@ -68,15 +66,13 @@ impl World {
     }
 
     pub fn get_snake_length(&self) -> usize {
-
-        return self.snake.body.len();
+        self.snake.body.len()
     }
 
     // *const is a raw pointer, not a reference (&)
     // borrrowing rules don't apply here
     pub fn get_snake_cells(&self) -> *const SnakeCell {
-
-        return self.snake.body.as_ptr(); 
+        self.snake.body.as_ptr()
     }
 
     pub fn step(&mut self) {
@@ -110,13 +106,12 @@ impl World {
     }
 
     fn move_snake_body(&mut self, prev_head_idx: usize) {
+        use std::mem::swap;
         let snake_length = self.snake.body.len();
         let mut prev_idx = prev_head_idx;
 
         for i in 1..snake_length {
-            let temp_idx = self.snake.body[i].0;
-            self.snake.body[i].0 = prev_idx;
-            prev_idx = temp_idx;
+            swap(&mut self.snake.body[i].0, &mut prev_idx)
         }
     }
 
@@ -128,19 +123,19 @@ impl World {
         let i_snake_idx = snake_idx as isize;
 
         if snake_length <= (snake_idx % world_length) + 1 {
-
-            return CellsIdxsCalculator {
+            
+            CellsIdxsCalculator {
                 calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize)
-            };
+            }
         } else {
             let row = snake_idx/world_length * world_length;
             let i_world_length = world_length as isize;
 
-            return CellsIdxsCalculator {
+            CellsIdxsCalculator {
                 calc_cells_idxs: Box::new(
                     move |i: isize| row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
                 )
-            };
+            }
         }
     }
 }
