@@ -8,7 +8,7 @@ pub struct SnakeCell(usize);
 
 struct Snake {
     body: Vec<SnakeCell>,
-    direction: Direction
+    direction: Direction,
 }
 
 struct CellsIdxsCalculator {
@@ -20,13 +20,15 @@ pub enum Direction {
     Up,
     Right,
     Down,
-    Left
+    Left,
 }
 
 #[wasm_bindgen]
 pub struct World {
     length: isize,
-    snake: Snake
+    size: isize,
+    snake: Snake,
+    next_cell_idx: Option<usize>,
 }
 
 #[wasm_bindgen]
@@ -35,7 +37,7 @@ impl World {
         world_length: usize,
         snake_idx: usize,
         direction: Direction,
-        snake_length: usize
+        snake_length: usize,
     ) -> World {
         let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
         let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
@@ -46,10 +48,9 @@ impl World {
 
         World {
             length: world_length as isize,
-            snake: Snake {
-                body,
-                direction
-            }
+            size: world_length.pow(2) as isize,
+            next_cell_idx: None,
+            snake: Snake { body, direction },
         }
     }
 
@@ -62,9 +63,11 @@ impl World {
     }
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
+        let next_cell = self.calc_next_idx(&direction);
 
-        if self.snake.body.len() < 2 || self.calc_next_idx(&direction) != self.snake.body[1].0 {
+        if self.snake.body.len() < 2 || next_cell != self.snake.body[1].0 {
             self.snake.direction = direction;
+            self.next_cell_idx = Some(next_cell);
         }
     }
 
@@ -79,36 +82,57 @@ impl World {
     }
 
     pub fn step(&mut self) {
-        let curr_idx = self.snake.body[0].0;
-        self.snake.body[0] = SnakeCell(self.calc_next_idx(&self.snake.direction));
-        self.move_snake_body(curr_idx);
+        let prev_idx = self.snake.body[0].0;
+
+        match self.next_cell_idx {
+            Some(idx) => {
+                self.snake.body[0].0 = idx;
+                self.next_cell_idx = None; //SnakeCell();
+            }
+            None => {
+                self.snake.body[0].0 = self.calc_next_idx(&self.snake.direction);
+            }
+        }
+
+        self.move_snake_body(prev_idx);
     }
 
     fn calc_next_idx(&self, direction: &Direction) -> usize {
-        let last_idx = self.length.pow(2);
         let snake_head_idx = self.snake.body[0].0 as isize;
-        let vert_thresholds = [-1, last_idx];
-        let hor_thresholds = [
-            snake_head_idx/self.length * self.length - 1,
-            snake_head_idx/self.length * self.length + self.length
-        ];
-        
+        let cur_row = snake_head_idx / self.length * self.length;
+
         match direction {
-            Direction::Up => if (snake_head_idx - self.length) > vert_thresholds[0]
-                            { (snake_head_idx - self.length) as usize }
-                            else { (last_idx - self.length + snake_head_idx) as usize }
+            Direction::Up => {
+                if (snake_head_idx - self.length) > -1 {
+                    (snake_head_idx - self.length) as usize
+                } else {
+                    (self.size - self.length + snake_head_idx) as usize
+                }
+            }
 
-            Direction::Right => if (snake_head_idx + 1) < hor_thresholds[1]
-                                { self.snake.body[0].0 + 1 }
-                                else { (snake_head_idx + 1 - self.length) as usize }
+            Direction::Right => {
+                if (snake_head_idx + 1) < cur_row + self.length {
+                    self.snake.body[0].0 + 1
+                } else {
+                    (snake_head_idx + 1 - self.length) as usize
+                }
+            }
 
-            Direction::Down => if (snake_head_idx + self.length) < vert_thresholds[1]
-                            { (snake_head_idx + self.length) as usize }
-                            else { (snake_head_idx + self.length - last_idx) as usize }
+            Direction::Down => {
+                if (snake_head_idx + self.length) < self.size {
+                    (snake_head_idx + self.length) as usize
+                } else {
+                    (snake_head_idx + self.length - self.size) as usize
+                }
+            }
 
-            Direction::Left => if (snake_head_idx - 1) > hor_thresholds[0]
-                            { self.snake.body[0].0 - 1 }
-                            else { (snake_head_idx + self.length - 1) as usize }
+            Direction::Left => {
+                if (snake_head_idx - 1) > cur_row - 1 {
+                    self.snake.body[0].0 - 1
+                } else {
+                    (snake_head_idx + self.length - 1) as usize
+                }
+            }
         }
     }
 
@@ -125,29 +149,26 @@ impl World {
     fn get_idxs_calculator(
         snake_idx: usize,
         snake_length: usize,
-        world_length: usize
+        world_length: usize,
     ) -> CellsIdxsCalculator {
         let i_snake_idx = snake_idx as isize;
 
         if snake_length <= (snake_idx % world_length) + 1 {
-            
             CellsIdxsCalculator {
-                calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize)
+                calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize),
             }
         } else {
-            let row = snake_idx/world_length * world_length;
+            let row = snake_idx / world_length * world_length;
             let i_world_length = world_length as isize;
 
             CellsIdxsCalculator {
-                calc_cells_idxs: Box::new(
-                    move |i: isize| row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
-                )
+                calc_cells_idxs: Box::new(move |i: isize| {
+                    row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
+                }),
             }
         }
     }
 }
-
-
 
 // cargo install wasm-pack --force --target x86_64-unknown-linux-musl
 //  wasm-pack build --target web

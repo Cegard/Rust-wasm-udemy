@@ -71,8 +71,7 @@ async function start() {
 
   document.addEventListener("keydown", (e) => {
     direction = directions[e.code] ?? direction;
-    let new_dir = world.change_snake_direction(direction);
-    console.log(new_dir)
+    world.change_snake_direction(direction);
   });
 }
 
