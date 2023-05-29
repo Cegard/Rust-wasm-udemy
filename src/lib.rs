@@ -40,7 +40,7 @@ impl World {
         let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
         let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
 
-        for i in 1..(snake_length as isize).max(1) {
+        for i in 1..(snake_length as isize) {
             body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
         }
 
@@ -62,7 +62,10 @@ impl World {
     }
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
-        self.snake.direction = direction;
+
+        if self.snake.body.len() < 2 || self.calc_next_idx(&direction) != self.snake.body[1].0 {
+            self.snake.direction = direction;
+        }
     }
 
     pub fn get_snake_length(&self) -> usize {
@@ -76,6 +79,12 @@ impl World {
     }
 
     pub fn step(&mut self) {
+        let curr_idx = self.snake.body[0].0;
+        self.snake.body[0] = SnakeCell(self.calc_next_idx(&self.snake.direction));
+        self.move_snake_body(curr_idx);
+    }
+
+    fn calc_next_idx(&self, direction: &Direction) -> usize {
         let last_idx = self.length.pow(2);
         let snake_head_idx = self.snake.body[0].0 as isize;
         let vert_thresholds = [-1, last_idx];
@@ -83,8 +92,8 @@ impl World {
             snake_head_idx/self.length * self.length - 1,
             snake_head_idx/self.length * self.length + self.length
         ];
-
-        self.snake.body[0].0 = match self.snake.direction {
+        
+        match direction {
             Direction::Up => if (snake_head_idx - self.length) > vert_thresholds[0]
                             { (snake_head_idx - self.length) as usize }
                             else { (last_idx - self.length + snake_head_idx) as usize }
@@ -100,9 +109,7 @@ impl World {
             Direction::Left => if (snake_head_idx - 1) > hor_thresholds[0]
                             { self.snake.body[0].0 - 1 }
                             else { (snake_head_idx + self.length - 1) as usize }
-        };
-
-        self.move_snake_body(snake_head_idx as usize);
+        }
     }
 
     fn move_snake_body(&mut self, prev_head_idx: usize) {

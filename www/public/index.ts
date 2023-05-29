@@ -42,7 +42,7 @@ function build_snake(buffer: ArrayBuffer, world: World): Uint32Array {
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
-  const SNAKE_LENGTH = 5;
+  const SNAKE_LENGTH = 4;
 
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
