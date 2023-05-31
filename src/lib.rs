@@ -63,7 +63,7 @@ impl World {
     }
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
-        let next_cell = self.calc_next_idx(&direction);
+        let next_cell = self.move_snake(&direction);
 
         if self.snake.body.len() < 2 || next_cell != self.snake.body[1].0 {
             self.snake.direction = direction;
@@ -87,52 +87,62 @@ impl World {
         match self.next_cell_idx {
             Some(idx) => {
                 self.snake.body[0].0 = idx;
-                self.next_cell_idx = None; //SnakeCell();
+                self.next_cell_idx = None;
             }
             None => {
-                self.snake.body[0].0 = self.calc_next_idx(&self.snake.direction);
+                self.snake.body[0].0 = self.move_snake(&self.snake.direction);
             }
         }
 
         self.move_snake_body(prev_idx);
     }
 
-    fn calc_next_idx(&self, direction: &Direction) -> usize {
+    fn move_snake(&self, direction: &Direction) -> usize {
         let snake_head_idx = self.snake.body[0].0 as isize;
-        let cur_row = snake_head_idx / self.length * self.length;
 
         match direction {
-            Direction::Up => {
-                if (snake_head_idx - self.length) > -1 {
-                    (snake_head_idx - self.length) as usize
-                } else {
-                    (self.size - self.length + snake_head_idx) as usize
-                }
-            }
+            Direction::Up => self.calc_next_idx(
+                (snake_head_idx - self.length) > -1,
+                snake_head_idx,
+                -self.length,
+                self.size - self.length
+            ),
 
-            Direction::Right => {
-                if (snake_head_idx + 1) < cur_row + self.length {
-                    self.snake.body[0].0 + 1
-                } else {
-                    (snake_head_idx + 1 - self.length) as usize
-                }
-            }
+            Direction::Right => self.calc_next_idx(
+                (snake_head_idx + 1) < snake_head_idx/self.length * self.length + self.length,
+                snake_head_idx,
+                1,
+                1 - self.length
+            ),
 
-            Direction::Down => {
-                if (snake_head_idx + self.length) < self.size {
-                    (snake_head_idx + self.length) as usize
-                } else {
-                    (snake_head_idx + self.length - self.size) as usize
-                }
-            }
+            Direction::Down => self.calc_next_idx(
+                (snake_head_idx + self.length) < self.size,
+                snake_head_idx,
+                self.length,
+                self.length - self.size
+            ),
 
-            Direction::Left => {
-                if (snake_head_idx - 1) > cur_row - 1 {
-                    self.snake.body[0].0 - 1
-                } else {
-                    (snake_head_idx + self.length - 1) as usize
-                }
-            }
+            Direction::Left => self.calc_next_idx(
+                (snake_head_idx - 1) > snake_head_idx/self.length * self.length - 1,
+                snake_head_idx,
+                - 1,
+                self.length - 1
+            ),
+        }
+    }
+
+    fn calc_next_idx(
+        &self,
+        is_inside: bool,
+        snake_head_idx: isize,
+        cells_to_move: isize,
+        reset_value: isize
+    ) -> usize {
+
+        if is_inside {
+            (snake_head_idx + cells_to_move) as usize
+        } else {
+            (snake_head_idx + reset_value) as usize
         }
     }
 
