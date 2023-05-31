@@ -63,7 +63,8 @@ async function start() {
     context,
     world.length(),
     CELL_SIZE,
-    build_snake(wasm.memory.buffer, world)
+    build_snake(wasm.memory.buffer, world),
+    world
   );
 
   draw();

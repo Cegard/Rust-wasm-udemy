@@ -1,6 +1,7 @@
+import { World } from 'snake_game_v1';
 import {DrawSnakeParams, DrawWorldParams } from './types'
 
-export function setDrawWorld(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
+function setWorldDrawer(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
   
   return () => {
@@ -16,7 +17,7 @@ export function setDrawWorld(...[context, worldSize, cellSize]: DrawWorldParams)
   };
 }
 
-export function drawSnake(...[context, worldSize, cellSize, cells]: DrawSnakeParams) {
+function drawSnake(...[context, worldSize, cellSize, cells]: DrawSnakeParams) {
   
   cells.forEach((cell, i) => {
     const headCol = cell % worldSize;
@@ -35,16 +36,41 @@ export function drawSnake(...[context, worldSize, cellSize, cells]: DrawSnakePar
   });
 }
 
+function drawReward(
+  world: World,
+  worldLength: number,
+  context: CanvasRenderingContext2D,
+  cellSize: number
+) {
+  
+  const rewardIdx = world.get_reward_idx();
+  const col = rewardIdx % worldLength;
+  const row = Math.floor(rewardIdx/worldLength);
+
+  context.fillStyle = "#ffaa00";
+
+  context.beginPath();
+  context.fillRect(
+    col * cellSize,
+    row * cellSize,
+    cellSize,
+    cellSize
+  );
+  context.stroke();
+}
+
 export function setDrawer(
   context: CanvasRenderingContext2D,
-  worldSize: number,
+  worldLength: number,
   cellSize: number,
-  cells: Uint32Array
+  cells: Uint32Array,
+  world: World
 ): () => void {
-  const drawWorld = setDrawWorld(context, worldSize, cellSize);
+  const drawWorld = setWorldDrawer(context, worldLength, cellSize);
 
   return () => {
     drawWorld();
-    drawSnake(context, worldSize, cellSize, cells);
+    drawSnake(context, worldLength, cellSize, cells);
+    drawReward(world, worldLength, context, cellSize);
   };
 }

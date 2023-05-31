@@ -29,6 +29,7 @@ pub struct World {
     size: isize,
     snake: Snake,
     next_cell_idx: Option<usize>,
+    reward_idx: usize,
 }
 
 #[wasm_bindgen]
@@ -51,7 +52,12 @@ impl World {
             size: world_length.pow(2) as isize,
             next_cell_idx: None,
             snake: Snake { body, direction },
+            reward_idx: 12,
         }
+    }
+
+    pub fn get_reward_idx(&self) -> usize {
+        self.reward_idx
     }
 
     pub fn length(&self) -> usize {
@@ -105,28 +111,28 @@ impl World {
                 (snake_head_idx - self.length) > -1,
                 snake_head_idx,
                 -self.length,
-                self.size - self.length
+                self.size - self.length,
             ),
 
             Direction::Right => self.calc_next_idx(
-                (snake_head_idx + 1) < snake_head_idx/self.length * self.length + self.length,
+                (snake_head_idx + 1) < snake_head_idx / self.length * self.length + self.length,
                 snake_head_idx,
                 1,
-                1 - self.length
+                1 - self.length,
             ),
 
             Direction::Down => self.calc_next_idx(
                 (snake_head_idx + self.length) < self.size,
                 snake_head_idx,
                 self.length,
-                self.length - self.size
+                self.length - self.size,
             ),
 
             Direction::Left => self.calc_next_idx(
-                (snake_head_idx - 1) > snake_head_idx/self.length * self.length - 1,
+                (snake_head_idx - 1) > snake_head_idx / self.length * self.length - 1,
                 snake_head_idx,
-                - 1,
-                self.length - 1
+                -1,
+                self.length - 1,
             ),
         }
     }
@@ -136,9 +142,8 @@ impl World {
         is_inside: bool,
         snake_head_idx: isize,
         cells_to_move: isize,
-        reset_value: isize
+        reset_value: isize,
     ) -> usize {
-
         if is_inside {
             (snake_head_idx + cells_to_move) as usize
         } else {
