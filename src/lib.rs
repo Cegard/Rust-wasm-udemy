@@ -6,7 +6,7 @@ static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
 #[wasm_bindgen(module = "/www/src/helpers.ts")]
 extern "C" {
-    fn now() -> usize;
+    fn randomInt(max: usize) -> usize;
 }
 
 pub struct SnakeCell(usize);
@@ -58,7 +58,7 @@ impl World {
             size: size as isize,
             next_cell_idx: None,
             snake: Snake { body, direction },
-            reward_idx: now() % size,
+            reward_idx: randomInt(size),
         }
     }
 

@@ -45,7 +45,7 @@ async function start() {
   const SNAKE_LENGTH = 4;
 
   let direction = Direction.Right;
-  const snakeSpawnIdx = randomInt(0, Math.pow(WORLD_WIDTH, 2));
+  const snakeSpawnIdx = randomInt(Math.pow(WORLD_WIDTH, 2));
 
   const wasm = await init();
 
