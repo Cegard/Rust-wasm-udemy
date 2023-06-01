@@ -4,6 +4,11 @@ use wee_alloc::WeeAlloc;
 #[global_allocator]
 static ALLOC: WeeAlloc = WeeAlloc::INIT;
 
+#[wasm_bindgen(module = "/www/src/helpers.ts")]
+extern "C" {
+    fn now() -> usize;
+}
+
 pub struct SnakeCell(usize);
 
 struct Snake {
@@ -42,6 +47,7 @@ impl World {
     ) -> World {
         let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
         let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
+        let size = world_length.pow(2);
 
         for i in 1..(snake_length as isize) {
             body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
@@ -49,10 +55,10 @@ impl World {
 
         World {
             length: world_length as isize,
-            size: world_length.pow(2) as isize,
+            size: size as isize,
             next_cell_idx: None,
             snake: Snake { body, direction },
-            reward_idx: 12,
+            reward_idx: now() % size,
         }
     }
 
