@@ -9,6 +9,7 @@ extern "C" {
     fn randomInt(max: usize) -> usize;
 }
 
+#[derive(PartialEq)]
 pub struct SnakeCell(usize);
 
 struct Snake {
@@ -35,6 +36,7 @@ pub struct World {
     snake: Snake,
     next_cell_idx: Option<usize>,
     reward_idx: usize,
+    free_idxs: Vec<usize>,
 }
 
 #[wasm_bindgen]
@@ -48,9 +50,14 @@ impl World {
         let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
         let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
         let size = world_length.pow(2);
+        let mut free_idxs: Vec<usize> = Vec::from_iter(0..size);
 
-        for i in 1..(snake_length as isize) {
-            body.push(SnakeCell((idx_calculator.calc_cells_idxs)(i)));
+        free_idxs.remove(snake_idx);
+
+        for i in (1..snake_length).rev() {
+            let snake_cell_idx = (idx_calculator.calc_cells_idxs)((snake_length - i) as isize);
+            body.push(SnakeCell(snake_cell_idx));
+            free_idxs.remove(snake_cell_idx);
         }
 
         World {
@@ -58,7 +65,8 @@ impl World {
             size: size as isize,
             next_cell_idx: None,
             snake: Snake { body, direction },
-            reward_idx: randomInt(size),
+            reward_idx: free_idxs[randomInt(free_idxs.len())],
+            free_idxs,
         }
     }
 
@@ -188,6 +196,10 @@ impl World {
                 }),
             }
         }
+    }
+
+    fn calc_reward_idx(&self) -> usize {
+        self.free_idxs[randomInt(self.free_idxs.len())]
     }
 }
 
