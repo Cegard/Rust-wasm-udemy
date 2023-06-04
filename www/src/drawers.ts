@@ -1,5 +1,6 @@
-import { World } from 'snake_game_v1';
-import {DrawSnakeParams, DrawWorldParams } from './types'
+import { InitOutput, World } from 'snake_game_v1';
+import { DrawWorldParams } from './types';
+import { buildSnake } from './helpers';
 
 function setWorldDrawer(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
@@ -17,11 +18,17 @@ function setWorldDrawer(...[context, worldSize, cellSize]: DrawWorldParams): () 
   };
 }
 
-function drawSnake(...[context, worldSize, cellSize, cells]: DrawSnakeParams) {
+function drawSnake(
+  context: CanvasRenderingContext2D,
+  worldLength: number,
+  cellSize: number,
+  wasm: InitOutput,
+  world: World
+  ) {
   
-  cells.forEach((cell, i) => {
-    const headCol = cell % worldSize;
-    const headRow = Math.floor(cell/worldSize);
+  buildSnake(wasm.memory.buffer, world).forEach((cell, i) => {
+    const headCol = cell % worldLength;
+    const headRow = Math.floor(cell/worldLength);
 
     context.fillStyle = i === 0 ? "#7878db" : "#000000";
 
@@ -63,14 +70,14 @@ export function setDrawer(
   context: CanvasRenderingContext2D,
   worldLength: number,
   cellSize: number,
-  cells: Uint32Array,
+  wasm: InitOutput,
   world: World
 ): () => void {
   const drawWorld = setWorldDrawer(context, worldLength, cellSize);
 
   return () => {
     drawWorld();
-    drawSnake(context, worldLength, cellSize, cells);
+    drawSnake(context, worldLength, cellSize, wasm, world);
     drawReward(world, worldLength, context, cellSize);
   };
 }

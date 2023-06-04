@@ -31,14 +31,6 @@ function update(
   updateDelayed();
 }
 
-function build_snake(buffer: ArrayBuffer, world: World): Uint32Array {
-  return new Uint32Array(
-    buffer,
-    world.get_snake_cells(),
-    world.get_snake_length()
-  );
-}
-
 async function start() {
   const CELL_SIZE = 35;
   const WORLD_WIDTH = 8;
@@ -63,7 +55,7 @@ async function start() {
     context,
     world.length(),
     CELL_SIZE,
-    build_snake(wasm.memory.buffer, world),
+    wasm,
     world
   );
 

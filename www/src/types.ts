@@ -6,11 +6,6 @@ export type DrawWorldParams = readonly [
   number
 ];
 
-export type DrawSnakeParams = readonly [
-  ...DrawWorldParams,
-  Uint32Array
-];
-
 export type DirectionsType = {
   [key: string]: Direction
 };

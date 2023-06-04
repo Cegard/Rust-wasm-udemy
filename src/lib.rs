@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use wasm_bindgen::prelude::*;
 use wee_alloc::WeeAlloc;
 
@@ -12,13 +13,10 @@ extern "C" {
 #[derive(PartialEq)]
 pub struct SnakeCell(usize);
 
-struct Snake {
+#[wasm_bindgen]
+pub struct Snake {
     body: Vec<SnakeCell>,
     direction: Direction,
-}
-
-struct CellsIdxsCalculator {
-    calc_cells_idxs: Box<dyn Fn(isize) -> usize + 'static>,
 }
 
 #[wasm_bindgen]
@@ -36,7 +34,7 @@ pub struct World {
     snake: Snake,
     next_cell_idx: Option<usize>,
     reward_idx: usize,
-    free_idxs: Vec<usize>,
+    free_idxs: HashSet<usize>,
 }
 
 #[wasm_bindgen]
@@ -47,17 +45,17 @@ impl World {
         direction: Direction,
         snake_length: usize,
     ) -> World {
-        let mut body: Vec<SnakeCell> = vec![SnakeCell(snake_idx)];
-        let idx_calculator = World::get_idxs_calculator(snake_idx, snake_length, world_length);
         let size = world_length.pow(2);
-        let mut free_idxs: Vec<usize> = Vec::from_iter(0..size);
+        let mut free_idxs: HashSet<usize> = HashSet::from_iter(0..size);
+        let mut body = vec![SnakeCell(snake_idx)];
 
-        free_idxs.remove(snake_idx);
+        free_idxs.remove(&snake_idx);
 
-        for i in (1..snake_length).rev() {
-            let snake_cell_idx = (idx_calculator.calc_cells_idxs)((snake_length - i) as isize);
-            body.push(SnakeCell(snake_cell_idx));
-            free_idxs.remove(snake_cell_idx);
+        for i in 1..snake_length {
+            let body_cell = (snake_idx / world_length * world_length).rem_euclid(size)
+                + (snake_idx - i).rem_euclid(world_length);
+            body.push(SnakeCell(body_cell));
+            free_idxs.remove(&body_cell);
         }
 
         World {
@@ -65,7 +63,8 @@ impl World {
             size: size as isize,
             next_cell_idx: None,
             snake: Snake { body, direction },
-            reward_idx: free_idxs[randomInt(free_idxs.len())],
+            reward_idx: free_idxs.iter().copied().collect::<Vec<usize>>()
+                [randomInt(free_idxs.len())],
             free_idxs,
         }
     }
@@ -83,7 +82,7 @@ impl World {
     }
 
     pub fn change_snake_direction(&mut self, direction: Direction) {
-        let next_cell = self.move_snake(&direction);
+        let next_cell = self.calc_snake_next_position(&direction);
 
         if self.snake.body.len() < 2 || next_cell != self.snake.body[1].0 {
             self.snake.direction = direction;
@@ -103,6 +102,7 @@ impl World {
 
     pub fn step(&mut self) {
         let prev_idx = self.snake.body[0].0;
+        let prev_tail = self.snake.body[self.snake.body.len() - 1].0;
 
         match self.next_cell_idx {
             Some(idx) => {
@@ -110,14 +110,22 @@ impl World {
                 self.next_cell_idx = None;
             }
             None => {
-                self.snake.body[0].0 = self.move_snake(&self.snake.direction);
+                self.snake.body[0].0 = self.calc_snake_next_position(&self.snake.direction);
             }
         }
 
+        self.free_idxs.insert(prev_tail);
         self.move_snake_body(prev_idx);
+        self.free_idxs.remove(&self.snake.body[0].0);
+
+        if self.snake.body[0].0 == self.reward_idx {
+            self.snake.body.push(SnakeCell(prev_tail));
+            self.free_idxs.remove(&prev_tail);
+            self.set_new_reward_pos();
+        }
     }
 
-    fn move_snake(&self, direction: &Direction) -> usize {
+    fn calc_snake_next_position(&self, direction: &Direction) -> usize {
         let snake_head_idx = self.snake.body[0].0 as isize;
 
         match direction {
@@ -175,31 +183,9 @@ impl World {
         }
     }
 
-    fn get_idxs_calculator(
-        snake_idx: usize,
-        snake_length: usize,
-        world_length: usize,
-    ) -> CellsIdxsCalculator {
-        let i_snake_idx = snake_idx as isize;
-
-        if snake_length <= (snake_idx % world_length) + 1 {
-            CellsIdxsCalculator {
-                calc_cells_idxs: Box::new(move |i: isize| (i_snake_idx - i) as usize),
-            }
-        } else {
-            let row = snake_idx / world_length * world_length;
-            let i_world_length = world_length as isize;
-
-            CellsIdxsCalculator {
-                calc_cells_idxs: Box::new(move |i: isize| {
-                    row + (i_snake_idx - i).rem_euclid(i_world_length) as usize
-                }),
-            }
-        }
-    }
-
-    fn calc_reward_idx(&self) -> usize {
-        self.free_idxs[randomInt(self.free_idxs.len())]
+    fn set_new_reward_pos(&mut self) {
+        self.reward_idx =
+            self.free_idxs.iter().copied().collect::<Vec<usize>>()[randomInt(self.free_idxs.len())];
     }
 }
 
