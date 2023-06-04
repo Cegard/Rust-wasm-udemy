@@ -1,6 +1,5 @@
 import { InitOutput, World } from 'snake_game_v1';
 import { DrawWorldParams } from './types';
-import { buildSnake } from './helpers';
 
 function setWorldDrawer(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
@@ -26,7 +25,11 @@ function drawSnake(
   world: World
   ) {
   
-  buildSnake(wasm.memory.buffer, world).forEach((cell, i) => {
+    (new Uint32Array(
+    wasm.memory.buffer,
+    world.get_snake_cells(),
+    world.get_snake_length()
+  )).forEach((cell, i) => {
     const headCol = cell % worldLength;
     const headRow = Math.floor(cell/worldLength);
 
