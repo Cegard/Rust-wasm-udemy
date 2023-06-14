@@ -29,18 +29,18 @@ function drawSnake(
     wasm.memory.buffer,
     world.get_snake_cells(),
     world.get_snake_length()
-  )).forEach((cell, i) => {
-    const headCol = cell % worldLength;
-    const headRow = Math.floor(cell/worldLength);
+    )).forEach((cell, i) => {
+      const headCol = cell % worldLength;
+      const headRow = Math.floor(cell/worldLength);
 
-    context.fillStyle = i === 0 ? "#7878db" : "#000000";
+      context.fillStyle = i === 0 ? "#7878db" : "#000000";
 
-    context.beginPath();
-    context.fillRect(
-      headCol * cellSize,
-      headRow * cellSize,
-      cellSize,
-      cellSize
+      context.beginPath();
+      context.fillRect(
+        headCol * cellSize,
+        headRow * cellSize,
+        cellSize,
+        cellSize
     );
     context.stroke();
   });

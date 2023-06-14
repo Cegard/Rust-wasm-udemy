@@ -13,10 +13,16 @@ extern "C" {
 #[derive(PartialEq)]
 pub struct SnakeCell(usize);
 
-#[wasm_bindgen]
-pub struct Snake {
+struct Snake {
     body: Vec<SnakeCell>,
     direction: Direction,
+}
+
+#[wasm_bindgen]
+pub enum SnakeStatus {
+    Playing,
+    Failed,
+    Finished
 }
 
 #[wasm_bindgen]
@@ -100,7 +106,7 @@ impl World {
         self.snake.body.as_ptr()
     }
 
-    pub fn step(&mut self) {
+    pub fn step(&mut self) -> SnakeStatus {
         let prev_idx = self.snake.body[0].0;
         let prev_tail = self.snake.body[self.snake.body.len() - 1].0;
 
@@ -121,8 +127,14 @@ impl World {
         if self.snake.body[0].0 == self.reward_idx {
             self.snake.body.push(SnakeCell(prev_tail));
             self.free_idxs.remove(&prev_tail);
-            self.set_new_reward_pos();
-        }
+
+            match self.new_reward_pos() {
+                Some(reward_cell) => self.reward_idx = reward_cell,
+                None => return SnakeStatus::Finished
+            };
+        };
+        
+        SnakeStatus::Playing
     }
 
     fn calc_snake_next_position(&self, direction: &Direction) -> usize {
@@ -183,9 +195,13 @@ impl World {
         }
     }
 
-    fn set_new_reward_pos(&mut self) {
-        self.reward_idx =
-            self.free_idxs.iter().copied().collect::<Vec<usize>>()[randomInt(self.free_idxs.len())];
+    fn new_reward_pos(&mut self) -> Option<usize> {
+
+        if !self.free_idxs.is_empty() {
+            Some(self.free_idxs.iter().copied().collect::<Vec<usize>>()[randomInt(self.free_idxs.len())])
+        } else {
+            None
+        }
     }
 }
 

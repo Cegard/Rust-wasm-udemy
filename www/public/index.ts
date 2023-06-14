@@ -1,4 +1,4 @@
-import init, { World, Direction } from "snake_game_v1";
+import init, { World, Direction, SnakeStatus } from "snake_game_v1";
 import { setDrawer } from "../src/drawers";
 import { randomInt } from "../src/helpers";
 import { DirectionsType } from "../src/types";
@@ -22,9 +22,9 @@ function update(
   function updateDelayed() {
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
-      world.step();
+      const step_result: SnakeStatus = world.step();
       draw();
-      requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
+      requestAnimationFrame(step_result == SnakeStatus.Playing ? updateDelayed : () => {alert("Stop!")}); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
   }
 
