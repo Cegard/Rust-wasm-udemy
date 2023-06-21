@@ -19,6 +19,7 @@ struct Snake {
 }
 
 #[wasm_bindgen]
+#[derive(PartialEq)]
 pub enum SnakeStatus {
     Playing,
     Failed,
@@ -41,6 +42,7 @@ pub struct World {
     next_cell_idx: Option<usize>,
     reward_idx: usize,
     free_idxs: HashSet<usize>,
+    status: Option<SnakeStatus>,
 }
 
 #[wasm_bindgen]
@@ -72,6 +74,7 @@ impl World {
             reward_idx: free_idxs.iter().copied().collect::<Vec<usize>>()
                 [randomInt(free_idxs.len())],
             free_idxs,
+            status: None,
         }
     }
 
@@ -106,10 +109,27 @@ impl World {
         self.snake.body.as_ptr()
     }
 
-    pub fn step(&mut self) -> SnakeStatus {
-        let prev_idx = self.snake.body[0].0;
-        let prev_tail = self.snake.body[self.snake.body.len() - 1].0;
+    pub fn step(&mut self) {
+        if self.status == Some(SnakeStatus::Playing) {
+            self.play_step();
+        }
+    }
 
+    fn play_step(&mut self) {
+        let prev_idx = self.snake.body[0].0;
+        let prev_tail = self.snake.body.last().unwrap().0;
+
+        self.move_snake_head();
+        self.move_snake_body(prev_idx, prev_tail);
+
+        if self.snake.body[0].0 == self.reward_idx {
+            self.eat_reward(prev_tail);
+        };
+
+        self.status = Some(SnakeStatus::Playing);
+    }
+
+    fn move_snake_head(&mut self) {
         match self.next_cell_idx {
             Some(idx) => {
                 self.snake.body[0].0 = idx;
@@ -119,22 +139,16 @@ impl World {
                 self.snake.body[0].0 = self.calc_snake_next_position(&self.snake.direction);
             }
         }
+    }
 
-        self.free_idxs.insert(prev_tail);
-        self.move_snake_body(prev_idx);
-        self.free_idxs.remove(&self.snake.body[0].0);
+    fn eat_reward(&mut self, prev_tail: usize) {
+        self.snake.body.push(SnakeCell(prev_tail));
+        self.free_idxs.remove(&prev_tail);
 
-        if self.snake.body[0].0 == self.reward_idx {
-            self.snake.body.push(SnakeCell(prev_tail));
-            self.free_idxs.remove(&prev_tail);
-
-            match self.new_reward_pos() {
-                Some(reward_cell) => self.reward_idx = reward_cell,
-                None => return SnakeStatus::Finished,
-            };
+        match self.new_reward_pos() {
+            Some(reward_cell) => self.reward_idx = reward_cell,
+            None => self.status = Some(SnakeStatus::Finished),
         };
-
-        SnakeStatus::Playing
     }
 
     fn calc_snake_next_position(&self, direction: &Direction) -> usize {
@@ -185,7 +199,7 @@ impl World {
         }
     }
 
-    fn move_snake_body(&mut self, prev_head_idx: usize) {
+    fn move_snake_body(&mut self, prev_head_idx: usize, prev_tail: usize) {
         use std::mem::swap;
         let snake_length = self.snake.body.len();
         let mut prev_idx = prev_head_idx;
@@ -193,6 +207,9 @@ impl World {
         for i in 1..snake_length {
             swap(&mut self.snake.body[i].0, &mut prev_idx)
         }
+
+        self.free_idxs.insert(prev_tail);
+        self.free_idxs.remove(&self.snake.body[0].0);
     }
 
     fn new_reward_pos(&mut self) -> Option<usize> {

@@ -22,9 +22,9 @@ function update(
   function updateDelayed() {
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
-      const step_result: SnakeStatus = world.step();
+      world.step();
       draw();
-      requestAnimationFrame(step_result == SnakeStatus.Playing ? updateDelayed : () => {alert("Stop!")}); // the callback will be invoked before the next browser re-paint
+      requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
   }
 
