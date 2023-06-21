@@ -22,7 +22,7 @@ struct Snake {
 pub enum SnakeStatus {
     Playing,
     Failed,
-    Finished
+    Finished,
 }
 
 #[wasm_bindgen]
@@ -130,10 +130,10 @@ impl World {
 
             match self.new_reward_pos() {
                 Some(reward_cell) => self.reward_idx = reward_cell,
-                None => return SnakeStatus::Finished
+                None => return SnakeStatus::Finished,
             };
         };
-        
+
         SnakeStatus::Playing
     }
 
@@ -196,9 +196,11 @@ impl World {
     }
 
     fn new_reward_pos(&mut self) -> Option<usize> {
-
         if !self.free_idxs.is_empty() {
-            Some(self.free_idxs.iter().copied().collect::<Vec<usize>>()[randomInt(self.free_idxs.len())])
+            Some(
+                self.free_idxs.iter().copied().collect::<Vec<usize>>()
+                    [randomInt(self.free_idxs.len())],
+            )
         } else {
             None
         }
