@@ -109,6 +109,12 @@ impl World {
         self.snake.body.as_ptr()
     }
 
+    pub fn start_game(&mut self) {
+        if self.status != Some(SnakeStatus::Playing) {
+            self.status = Some(SnakeStatus::Playing);
+        }
+    }
+
     pub fn step(&mut self) {
         if self.status == Some(SnakeStatus::Playing) {
             self.play_step();

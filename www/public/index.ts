@@ -10,7 +10,7 @@ const directions: DirectionsType = {
   ArrowLeft: Direction.Left,
 };
 
-function update(
+function setPlay(
   width: number,
   height: number,
   context: CanvasRenderingContext2D,
@@ -18,8 +18,10 @@ function update(
   draw: () => void
 ) {
   const SPEED = 2; // tiles per second
+  
+  draw();
 
-  function updateDelayed() {
+  return function updateDelayed() {
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
       world.step();
@@ -27,8 +29,6 @@ function update(
       requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
   }
-
-  updateDelayed();
 }
 
 async function start() {
@@ -43,13 +43,13 @@ async function start() {
 
   const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction, SNAKE_LENGTH);
 
+  const controlGameBtn = document.getElementById("control-game-btn");
   const canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
-  if (canvas === null) return;
+  const context = canvas.getContext("2d");
+
+  if (canvas === null || controlGameBtn === null || context === null) return;
 
   canvas.height = canvas.width = world.length() * CELL_SIZE;
-
-  const context = canvas.getContext("2d");
-  if (context === null) return;
 
   const draw = setDrawer(
     context,
@@ -58,9 +58,12 @@ async function start() {
     wasm,
     world
   );
-
-  draw();
-  update(canvas.height, canvas.width, context, world, draw);
+  const play = setPlay(canvas.height, canvas.width, context, world, draw);
+  
+  controlGameBtn.addEventListener("click", _ => {
+    play();
+    world.start_game();
+  });
 
   document.addEventListener("keydown", (e) => {
     direction = directions[e.code] ?? direction;
