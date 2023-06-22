@@ -205,7 +205,7 @@ impl World {
         let mut prev_idx = prev_head_idx;
 
         for i in 1..snake_length {
-            swap(&mut self.snake.body[i].0, &mut prev_idx)
+            swap(&mut self.snake.body[i].0, &mut prev_idx);
         }
 
         self.free_idxs.insert(prev_tail);
