@@ -10,10 +10,15 @@ const directions: DirectionsType = {
   ArrowLeft: Direction.Left,
 };
 
+function drawGameStatus(label: HTMLElement, world: World) {
+  label.textContent = world.game_status_text();
+}
+
 function setPlay(
   width: number,
   height: number,
   context: CanvasRenderingContext2D,
+  label: HTMLElement,
   world: World,
   draw: () => void
 ) {
@@ -25,6 +30,7 @@ function setPlay(
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
       world.step();
+      drawGameStatus(label, world);
       draw();
       requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
@@ -33,8 +39,8 @@ function setPlay(
 
 async function start() {
   const CELL_SIZE = 35;
-  const WORLD_WIDTH = 8;
-  const SNAKE_LENGTH = 4;
+  const WORLD_WIDTH = 3;
+  const SNAKE_LENGTH = 2;
 
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(Math.pow(WORLD_WIDTH, 2));
@@ -43,13 +49,15 @@ async function start() {
 
   const world = World.new(WORLD_WIDTH, snakeSpawnIdx, direction, SNAKE_LENGTH);
 
-  const controlGameBtn = document.getElementById("control-game-btn");
   const canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
   const context = canvas.getContext("2d");
+  const gameStatus = document.getElementById("game-status");
+  const controlGameBtn = document.getElementById("control-game-btn");
 
-  if (canvas === null || controlGameBtn === null || context === null) return;
+  if (canvas === null || context === null || gameStatus === null || controlGameBtn === null ) return;
 
   canvas.height = canvas.width = world.length() * CELL_SIZE;
+  drawGameStatus(gameStatus, world);
 
   const draw = setDrawer(
     context,
@@ -58,12 +66,12 @@ async function start() {
     wasm,
     world
   );
-  const play = setPlay(canvas.height, canvas.width, context, world, draw);
+  const play = setPlay(canvas.height, canvas.width, context, gameStatus, world, draw);
   
   controlGameBtn.addEventListener("click", _ => {
-    const gameStatus = world.game_status();
+    const initStatus = world.game_status();
 
-    if (gameStatus === undefined) {
+    if (initStatus === undefined) {
       controlGameBtn.textContent = "Start again";
       play();
       world.start_game();

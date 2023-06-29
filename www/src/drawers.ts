@@ -29,7 +29,8 @@ function drawSnake(
     wasm.memory.buffer,
     world.get_snake_cells(),
     world.get_snake_length()
-    )).forEach((cell, i) => {
+    ))
+    .forEach((cell, i) => {
       const headCol = cell % worldLength;
       const headRow = Math.floor(cell/worldLength);
 
@@ -54,19 +55,22 @@ function drawReward(
 ) {
   
   const rewardIdx = world.get_reward_idx();
-  const col = rewardIdx % worldLength;
-  const row = Math.floor(rewardIdx/worldLength);
 
-  context.fillStyle = "#ffaa00";
+  if (rewardIdx !== undefined) {
+    const col = rewardIdx % worldLength;
+    const row = Math.floor(rewardIdx/worldLength);
 
-  context.beginPath();
-  context.fillRect(
-    col * cellSize,
-    row * cellSize,
-    cellSize,
-    cellSize
-  );
-  context.stroke();
+    context.fillStyle = "#ffaa00";
+
+    context.beginPath();
+    context.fillRect(
+      col * cellSize,
+      row * cellSize,
+      cellSize,
+      cellSize
+    );
+    context.stroke();
+  }
 }
 
 export function setDrawer(
