@@ -23,13 +23,15 @@ function drawSnake(
   cellSize: number,
   wasm: InitOutput,
   world: World
-  ) {
-  
-    (new Uint32Array(
+) {
+  const snake = new Uint32Array(
     wasm.memory.buffer,
     world.get_snake_cells(),
     world.get_snake_length()
-    ))
+  );
+
+  snake
+    .filter((cell, i) => !(i > 0 && cell === snake[0]))
     .forEach((cell, i) => {
       const headCol = cell % worldLength;
       const headRow = Math.floor(cell/worldLength);
@@ -42,9 +44,9 @@ function drawSnake(
         headRow * cellSize,
         cellSize,
         cellSize
-    );
-    context.stroke();
-  });
+      );
+      context.stroke();
+    });
 }
 
 function drawReward(
