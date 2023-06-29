@@ -39,8 +39,8 @@ function setPlay(
 
 async function start() {
   const CELL_SIZE = 35;
-  const WORLD_WIDTH = 3;
-  const SNAKE_LENGTH = 2;
+  const WORLD_WIDTH = 7;
+  const SNAKE_LENGTH = 4;
 
   let direction = Direction.Right;
   const snakeSpawnIdx = randomInt(Math.pow(WORLD_WIDTH, 2));

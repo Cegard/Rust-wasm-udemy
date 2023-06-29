@@ -155,6 +155,10 @@ impl World {
         self.move_snake_head();
         self.move_snake_body(prev_idx);
 
+        if self.snake.body[1..self.snake.body.len()].contains(&self.snake.body[0]) {
+            self.status = Some(SnakeStatus::Failed);
+        }
+
         if self.snake.body[0].0 == self.reward_idx.unwrap() {
             self.eat_reward(prev_tail);
         } else {
