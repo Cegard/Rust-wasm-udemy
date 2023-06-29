@@ -19,7 +19,7 @@ struct Snake {
 }
 
 #[wasm_bindgen]
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum SnakeStatus {
     Playing,
     Failed,
@@ -119,6 +119,10 @@ impl World {
         if self.status == Some(SnakeStatus::Playing) {
             self.play_step();
         }
+    }
+
+    pub fn game_status(&self) -> Option<SnakeStatus> {
+        self.status
     }
 
     fn play_step(&mut self) {

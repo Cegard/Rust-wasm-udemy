@@ -61,8 +61,16 @@ async function start() {
   const play = setPlay(canvas.height, canvas.width, context, world, draw);
   
   controlGameBtn.addEventListener("click", _ => {
-    play();
-    world.start_game();
+    const gameStatus = world.game_status();
+
+    if (gameStatus === undefined) {
+      controlGameBtn.textContent = "Start again";
+      play();
+      world.start_game();
+    }
+    else {
+      location.reload();
+    }
   });
 
   document.addEventListener("keydown", (e) => {
