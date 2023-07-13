@@ -56,6 +56,7 @@ pub struct World {
     reward_idx: Option<usize>,
     free_idxs: HashSet<usize>,
     status: Option<SnakeStatus>,
+    points: usize,
 }
 
 #[wasm_bindgen]
@@ -89,6 +90,7 @@ impl World {
             ),
             free_idxs,
             status: None,
+            points: 0,
         }
     }
 
@@ -148,6 +150,10 @@ impl World {
         }
     }
 
+    pub fn get_points(&self) -> usize {
+        self.points
+    }
+
     fn play_step(&mut self) {
         let prev_idx = self.snake.body[0].0;
         let prev_tail = self.snake.body.last().unwrap().0;
@@ -182,6 +188,7 @@ impl World {
         self.snake.body.push(SnakeCell(prev_tail));
         self.free_idxs.remove(&prev_tail);
         self.reward_idx = self.new_reward_pos();
+        self.points += 1;
 
         if self.reward_idx.is_none() {
             self.status = Some(SnakeStatus::Finished);

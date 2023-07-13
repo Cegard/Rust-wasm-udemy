@@ -10,15 +10,17 @@ const directions: DirectionsType = {
   ArrowLeft: Direction.Left,
 };
 
-function drawGameStatus(label: HTMLElement, world: World) {
-  label.textContent = world.game_status_text();
+function drawGameStatus(statusLabel: HTMLElement, pointsLabel: HTMLElement, world: World) {
+  statusLabel.textContent = world.game_status_text();
+  pointsLabel.textContent = world.get_points().toString();
 }
 
 function setPlay(
   width: number,
   height: number,
   context: CanvasRenderingContext2D,
-  label: HTMLElement,
+  statusLabel: HTMLElement,
+  pointsLabel: HTMLElement,
   world: World,
   draw: () => void
 ) {
@@ -30,7 +32,7 @@ function setPlay(
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
       world.step();
-      drawGameStatus(label, world);
+      drawGameStatus(statusLabel, pointsLabel, world);
       draw();
       requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
@@ -52,12 +54,18 @@ async function start() {
   const canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
   const context = canvas.getContext("2d");
   const gameStatus = document.getElementById("game-status");
+  const gamePoints = document.getElementById("game-points");
   const controlGameBtn = document.getElementById("control-game-btn");
 
-  if (canvas === null || context === null || gameStatus === null || controlGameBtn === null ) return;
+  if (
+    canvas === null
+    || context === null
+    || gameStatus === null
+    || gamePoints === null
+    || controlGameBtn === null) return;
 
   canvas.height = canvas.width = world.length() * CELL_SIZE;
-  drawGameStatus(gameStatus, world);
+  drawGameStatus(gameStatus, gamePoints, world);
 
   const draw = setDrawer(
     context,
@@ -66,7 +74,7 @@ async function start() {
     wasm,
     world
   );
-  const play = setPlay(canvas.height, canvas.width, context, gameStatus, world, draw);
+  const play = setPlay(canvas.height, canvas.width, context, gameStatus, gamePoints, world, draw);
   
   controlGameBtn.addEventListener("click", _ => {
     const initStatus = world.game_status();
