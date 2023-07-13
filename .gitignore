@@ -6,7 +6,7 @@ node_modules
 www/node_modules
 www/public/**/*.wasm
 www/public/bootstrap.js
-#www/public/index.html
+www/public/index.html
 
 # Added by cargo
 /target
