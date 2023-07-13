@@ -1,9 +1,12 @@
 
 .directory
 .vscode
+node_modules
 
 www/node_modules
-www/public/static/add.wasm
+www/public/**/*.wasm
+www/public/bootstrap.js
+#www/public/index.html
 
 # Added by cargo
 /target

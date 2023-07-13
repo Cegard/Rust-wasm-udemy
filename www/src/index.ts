@@ -1,7 +1,7 @@
 import init, { World, Direction, SnakeStatus } from "snake_game_v1";
-import { setDrawer } from "../src/drawers";
-import { randomInt } from "../src/helpers";
-import { DirectionsType } from "../src/types";
+import { setDrawer } from "./drawers";
+import { randomInt } from "./helpers";
+import { DirectionsType } from "./types";
 
 const directions: DirectionsType = {
   ArrowUp: Direction.Up,

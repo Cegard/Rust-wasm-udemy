@@ -2,9 +2,9 @@ import * as path from "path";
 import copy from "copy-webpack-plugin";
 
 module.exports = {
-  entry: "./public/bootstrap.ts",
+  entry: "./src/bootstrap.ts",
   output: {
-    path: path.resolve(__dirname, "public/static"),
+    path: path.resolve(__dirname, "public"),
     filename: "bootstrap.js"
   },
   mode: "development",
@@ -23,7 +23,7 @@ module.exports = {
   plugins: [
     new copy({
       patterns: [
-        {from: "public/index.html", to: "./index.html"}
+        {from: "src/index.html", to: "./index.html"}
       ]
     })
   ]
