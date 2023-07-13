@@ -29,12 +29,18 @@ function setPlay(
   draw();
 
   return function updateDelayed() {
+
+    if (
+        world.game_status() === SnakeStatus.Failed 
+        || world.game_status() === SnakeStatus.Finished
+      ) return
+    
     setTimeout(() => {
       context.clearRect(0, 0, width, height);
       world.step();
       drawGameStatus(statusLabel, pointsLabel, world);
       draw();
-      requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
+        requestAnimationFrame(updateDelayed); // the callback will be invoked before the next browser re-paint
     }, 1000 / SPEED);
   }
 }
