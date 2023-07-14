@@ -3,7 +3,7 @@ import { DrawWorldParams } from './types';
 
 function setWorldDrawer(...[context, worldSize, cellSize]: DrawWorldParams): () => void {
   const dimentionSize = cellSize * cellSize;
-  
+
   return () => {
     context.beginPath();
     Array.from(Array(worldSize + 1).keys()).map((position) => {
@@ -34,17 +34,12 @@ function drawSnake(
     .filter((cell, i) => !(i > 0 && cell === snake[0]))
     .forEach((cell, i) => {
       const headCol = cell % worldLength;
-      const headRow = Math.floor(cell/worldLength);
+      const headRow = Math.floor(cell / worldLength);
 
-      context.fillStyle = i === 0 ? "#7878db" : "#000000";
+      context.fillStyle = i === 0 ? '#7878db' : '#000000';
 
       context.beginPath();
-      context.fillRect(
-        headCol * cellSize,
-        headRow * cellSize,
-        cellSize,
-        cellSize
-      );
+      context.fillRect(headCol * cellSize, headRow * cellSize, cellSize, cellSize);
       context.stroke();
     });
 }
@@ -55,22 +50,16 @@ function drawReward(
   context: CanvasRenderingContext2D,
   cellSize: number
 ) {
-  
   const rewardIdx = world.get_reward_idx();
 
   if (rewardIdx !== undefined) {
     const col = rewardIdx % worldLength;
-    const row = Math.floor(rewardIdx/worldLength);
+    const row = Math.floor(rewardIdx / worldLength);
 
-    context.fillStyle = "#ffaa00";
+    context.fillStyle = '#ffaa00';
 
     context.beginPath();
-    context.fillRect(
-      col * cellSize,
-      row * cellSize,
-      cellSize,
-      cellSize
-    );
+    context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
     context.stroke();
   }
 }
