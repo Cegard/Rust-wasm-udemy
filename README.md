@@ -7,7 +7,7 @@ You can go through the course's lessons via the commit history (Most of them spe
 - Rust
 - cargo
 - npm
-- [wasm-pack ] (https://rustwasm.github.io/wasm-pack/installer/)
+- [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
 
 ## Steps for running
 
