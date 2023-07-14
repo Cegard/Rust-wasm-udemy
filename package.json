@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eduardo Galeano",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "compression": "^1.7.4",
     "eslint-config-prettier": "^8.8.0",
