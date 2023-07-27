@@ -1,5 +1,5 @@
 # Rust-wasm-udemy
-Repository which goes through the course Rust &amp; WebAssembly with JS (TS) - The Practical Guide.
+Repository which goes through the course [Rust &amp; WebAssembly with JS (TS) - The Practical Guide](https://www.udemy.com/course/rust-webassembly-with-js-ts-the-practical-guide/).
 
 You can go through the course's lessons via the commit history (Most of them specify the lesson number).
 
